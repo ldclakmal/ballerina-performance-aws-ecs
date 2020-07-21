@@ -1,0 +1,498 @@
+# ----------------------------------------------------------------------------
+#
+# Copyright (c) 2020, WSO2 Inc. (http://wso2.org) All Rights Reserved.
+#
+# WSO2 Inc. licenses this file to you under the Apache License,
+# Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+# ----------------------------------------------------------------------------
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  AWS CloudFormation Template to run performance tests. This template
+  would create a Amazon ECS cluster and run the tests using Fargate instances. 
+  The JMeter Client EC2 instance will be in a public subnet with a public IP. 
+  All other EC2 instances will be in a private subnet.
+  **WARNING** This template creates multiple Amazon AWS resources. You will be
+  billed for the AWS resources used if you create a stack from this template.
+#############################
+# User inputs
+#############################
+Parameters:
+  UserEmail:
+    Type: String
+    Description: Email address of the user creating this stack
+    AllowedPattern: '[^\s@]+@[^\s@]+\.[^\s@]+'
+    ConstraintDescription: You should enter a valid email
+################################
+# Create AWS resources
+################################
+Resources:
+  ####################################################################
+  # Create IAM resources for ECS task execution
+  ####################################################################
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: [ecs-tasks.amazonaws.com]
+          Action: ['sts:AssumeRole']
+      Path: /
+      Policies:
+        - PolicyName: AmazonECSTaskExecutionRolePolicy
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+                # ECS Tasks to download images from ECR
+                - 'ecr:GetAuthorizationToken'
+                - 'ecr:BatchCheckLayerAvailability'
+                - 'ecr:GetDownloadUrlForLayer'
+                - 'ecr:BatchGetImage'
+                # ECS tasks to upload logs to CloudWatch
+                - 'logs:CreateLogStream'
+                - 'logs:PutLogEvents'
+              Resource: '*'
+  ##########################################################################################
+  # Create VPC, public subnet and private subnet
+  ##########################################################################################
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'VPC'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  # Configure Public Subnet
+  PublicSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: 10.0.0.0/24
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'PublicSubnet'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'InternetGateway'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'PublicRouteTable'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PublicSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+  # Configure Private Subnet
+  PrivateSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: 10.0.1.0/24
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'PrivateSubnet'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  NatGateway:
+    Type: 'AWS::EC2::NatGateway'
+    DependsOn: AttachGateway
+    Properties:
+      AllocationId: !GetAtt
+        - NatGatewayIPAddress
+        - AllocationId
+      SubnetId: !Ref PublicSubnet
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'NatGateway'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  NatGatewayIPAddress:
+    Type: 'AWS::EC2::EIP'
+    DependsOn: AttachGateway
+    Properties:
+      Domain: vpc
+  PrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'PrivateRouteTable'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  PrivateRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+  PrivateSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      RouteTableId: !Ref PrivateRouteTable
+  SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VPC
+      GroupDescription: Security Group for Fargate tasks
+      SecurityGroupIngress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+  ####################################################################
+  # Create ECS Cluster and load balancer
+  ####################################################################
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: 'perf-test-cluster'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'ECS-Cluster'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: ecs-load-balancer
+      Type: network
+      Scheme: internal
+      Subnets:
+        - !Ref PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'LoadBalancer'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail  
+  ####################################################################
+  # Netty server
+  ####################################################################
+  NettyTask:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: netty
+      Cpu: 512
+      Memory: 1024
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !Ref ECSTaskExecutionRole
+      ContainerDefinitions:
+        - Name: netty-container
+          Image: 134633749276.dkr.ecr.us-east-2.amazonaws.com/netty-echo-backend:latest
+          PortMappings:
+            - ContainerPort: 8688
+              Protocol: tcp
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: 'perf-test'
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: 'netty'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'NettyTask'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  NettyService:
+    Type: AWS::ECS::Service
+    DependsOn: NettyLoadBalancerListener
+    Properties:
+      ServiceName: netty-service
+      TaskDefinition: !Ref NettyTask
+      Cluster: !Ref ECSCluster
+      LaunchType: FARGATE
+      DesiredCount: 1
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          Subnets:
+            - !Ref PrivateSubnet
+          SecurityGroups:
+            - !Ref SecurityGroup
+      LoadBalancers:
+        - ContainerName: netty-container
+          ContainerPort: 8688
+          TargetGroupArn: !Ref NettyTargetGroup
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'NettyService'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  NettyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: netty-tg
+      VpcId: !Ref VPC
+      Port: 8688
+      Protocol: TCP
+      Matcher:
+        HttpCode: 200-399
+      HealthCheckPath: /service/EchoService
+      HealthCheckProtocol: HTTP
+      TargetType: ip
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'NettyTargetGroup'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  NettyLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Protocol: TCP
+      Port: 8688
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref NettyTargetGroup
+  ####################################################################
+  # Ballerina test
+  ####################################################################
+  BalTask:
+    Type: AWS::ECS::TaskDefinition
+    DependsOn: LoadBalancer
+    Properties:
+      Family: bal
+      Cpu: 512
+      Memory: 1024
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !Ref ECSTaskExecutionRole
+      ContainerDefinitions:
+        - Name: bal-container
+          Image: 134633749276.dkr.ecr.us-east-2.amazonaws.com/h1c-h1c-test:latest
+          PortMappings:
+            - ContainerPort: 9090
+              Protocol: tcp
+          Environment:
+            - Name: NETTY_HOST 
+              Value: !GetAtt LoadBalancer.DNSName
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: 'perf-test'
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: 'bal-test'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'BalTask'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  BalService:
+    Type: AWS::ECS::Service
+    DependsOn: NettyLoadBalancerListener
+    Properties:
+      ServiceName: bal-service
+      TaskDefinition: !Ref BalTask
+      Cluster: !Ref ECSCluster
+      LaunchType: FARGATE
+      DesiredCount: 1
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets:
+            - !Ref PrivateSubnet
+          SecurityGroups:
+            - !Ref SecurityGroup
+      LoadBalancers:
+        - ContainerName: bal-container
+          ContainerPort: 9090
+          TargetGroupArn: !Ref BalTargetGroup
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'BalService'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  BalTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: bal-tg
+      VpcId: !Ref VPC
+      Port: 9090
+      Protocol: TCP
+      Matcher:
+        HttpCode: 200-399
+      HealthCheckPath: /passthrough/health-check
+      HealthCheckProtocol: HTTP
+      TargetType: ip
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'BalTargetGroup'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  BalLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Protocol: TCP
+      Port: 9090
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref BalTargetGroup
+  ####################################################################
+  # Jmeter Client
+  ####################################################################
+  JMeterTask:
+    Type: AWS::ECS::TaskDefinition
+    DependsOn: LoadBalancer
+    Properties:
+      Family: JMeter
+      Cpu: 512
+      Memory: 1024
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !Ref ECSTaskExecutionRole
+      ContainerDefinitions:
+        - Name: JMeter-container
+          Image: 134633749276.dkr.ecr.us-east-2.amazonaws.com/jmeter-client:latest
+          Cpu: 512
+          Memory: 1024
+          PortMappings:
+            - ContainerPort: 8080
+              Protocol: tcp
+          Environment:
+            - Name: HOST_NAME 
+              Value: !GetAtt LoadBalancer.DNSName
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: 'perf-test'
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: 'jmeter-test'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'JMeterTask'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+  JMeterService:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: jmeter-service
+      TaskDefinition: !Ref JMeterTask
+      Cluster: !Ref ECSCluster
+      LaunchType: FARGATE
+      DesiredCount: 1
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets:
+            - !Ref PublicSubnet
+          SecurityGroups:
+            - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'JMeterService'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
