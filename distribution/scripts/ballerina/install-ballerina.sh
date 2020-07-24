@@ -28,7 +28,7 @@ fi
 
 wget -O /home/ubuntu/ballerina-zip.zip https://dist.ballerina.io/downloads/swan-lake-preview2/ballerina-swan-lake-preview2.zip
 
-apt install libarchive-tools
+apt install -y libarchive-tools
 
 mkdir /home/ubuntu/bal-directory
 
