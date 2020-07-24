@@ -9,6 +9,7 @@ fi
 
 export repo_directory="/home/ubuntu/ballerina-performance-aws-ecs"
 export script_directory="$repo_directory/distribution/scripts"
+export bal_directory=""
 
 # Start by cloning the performance test repository
 git clone https://daksithj:85351a39913458d12edb15f8f9ad0ed576d8251e@github.com/ldclakmal/ballerina-performance-aws-ecs.git $repo_directory
@@ -30,3 +31,6 @@ $script_directory/docker/install-docker.sh
 chmod +x $script_directory/java/install-java.sh
 $script_directory/java/install-java.sh
 
+# Install Ballerina
+chmod +x $script_directory/ballerina/install-ballerina.sh
+$script_directory/ballerina/install-ballerina.sh
