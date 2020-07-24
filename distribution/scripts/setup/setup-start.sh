@@ -34,3 +34,4 @@ $script_directory/java/install-java.sh
 # Install Ballerina
 chmod +x $script_directory/ballerina/install-ballerina.sh
 $script_directory/ballerina/install-ballerina.sh
+$bal_directory="/home/ubuntu/bal-directory/bin"

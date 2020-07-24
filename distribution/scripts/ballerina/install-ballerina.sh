@@ -34,9 +34,5 @@ mkdir /home/ubuntu/bal-directory
 
 bsdtar --strip-components=1 -C /home/ubuntu/bal-directory -xvf /home/ubuntu/ballerina-zip.zip
 
-$bal_directory="/home/ubuntu/bal-directory/bin"
-
-user_bashrc_file=/home/$user/.bashrc
-
 
 
