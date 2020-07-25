@@ -15,8 +15,6 @@
 #
 # ----------------------------------------------------------------------------
 # Installation script for setting up Java on Linux.
-# This is a simplified version of the script in
-# https://github.com/chrishantha/install-java
 # ----------------------------------------------------------------------------
 
 # Make sure the script is running as root.

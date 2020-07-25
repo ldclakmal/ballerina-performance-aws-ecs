@@ -1,4 +1,21 @@
 #!/bin/bash -e
+# Copyright 2020 WSO2 Inc. (http://wso2.org)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# ----------------------------------------------------------------------------
+# Setting up the EC2 Linux machine
+# ----------------------------------------------------------------------------
 
 # Make sure the script is running as root.
 if [ "$UID" -ne "0" ]; then
@@ -9,7 +26,7 @@ fi
 
 export repo_directory="/home/ubuntu/ballerina-performance-aws-ecs"
 export script_directory="$repo_directory/distribution/scripts"
-export bal_directory=""
+export bal_directory=="/home/ubuntu/bal-directory/bin"
 
 # Start by cloning the performance test repository
 git clone https://daksithj:85351a39913458d12edb15f8f9ad0ed576d8251e@github.com/ldclakmal/ballerina-performance-aws-ecs.git $repo_directory
@@ -24,14 +41,17 @@ fi
 
 # Install docker
 chmod +x $script_directory/docker/install-docker.sh
-$script_directory/docker/install-docker.sh
-
+source $script_directory/docker/install-docker.sh
 
 # Install Java
 chmod +x $script_directory/java/install-java.sh
-$script_directory/java/install-java.sh
+source $script_directory/java/install-java.sh
 
 # Install Ballerina
 chmod +x $script_directory/ballerina/install-ballerina.sh
-$script_directory/ballerina/install-ballerina.sh
-$bal_directory="/home/ubuntu/bal-directory/bin"
+source $script_directory/ballerina/install-ballerina.sh
+
+# Install maven and build project
+chmod +x $script_directory/setup/build-components.sh
+source $script_directory/setup/components.sh
+
