@@ -27,7 +27,7 @@ if [ "$UID" -ne "0" ]; then
 fi
 
 if ! command -v mvn >/dev/null 2>&1; then
-    apt install maven
+    apt -y install maven
 fi
 
 # Build the performance test components
