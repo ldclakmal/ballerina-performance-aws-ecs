@@ -53,5 +53,5 @@ source $script_directory/ballerina/install-ballerina.sh
 
 # Install maven and build project
 chmod +x $script_directory/setup/build-components.sh
-source $script_directory/setup/components.sh
+source $script_directory/setup/build-components.sh
 
