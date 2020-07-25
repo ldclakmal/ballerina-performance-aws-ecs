@@ -14,9 +14,7 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Installation script for setting up Java on Linux.
-# This is a simplified version of the script in
-# https://github.com/chrishantha/install-java
+# Installation script for setting up Ballerina on Linux.
 # ----------------------------------------------------------------------------
 
 # Make sure the script is running as root.
@@ -34,5 +32,8 @@ mkdir /home/ubuntu/bal-directory
 
 bsdtar --strip-components=1 -C /home/ubuntu/bal-directory -xvf /home/ubuntu/ballerina-zip.zip
 
-
+if ! command -v $bal_directory/ballerina >/dev/null 2>&1; then
+    echo "Ballerina wasn't installed properly"
+    exit 1
+fi
 
