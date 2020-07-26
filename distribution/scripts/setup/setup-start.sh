@@ -27,6 +27,9 @@ fi
 export repo_directory="/home/ubuntu/ballerina-performance-aws-ecs"
 export script_directory="$repo_directory/distribution/scripts"
 export bal_directory=="/home/ubuntu/bal-directory/bin"
+export aws_ecr_link="134633749276.dkr.ecr.us-east-2.amazonaws.com"
+export aws_region="us-east-2"
+export home_directory="/home/ubuntu"
 
 # Start by cloning the performance test repository
 git clone https://daksithj:85351a39913458d12edb15f8f9ad0ed576d8251e@github.com/ldclakmal/ballerina-performance-aws-ecs.git $repo_directory
@@ -51,7 +54,15 @@ source $script_directory/java/install-java.sh
 chmod +x $script_directory/ballerina/install-ballerina.sh
 source $script_directory/ballerina/install-ballerina.sh
 
+# Insall the AWS CLI
+chmod +x $script_directory/setup/install-awscli.sh
+source $script_directory/setup/install-awscli.sh
+
 # Install maven and build project
 chmod +x $script_directory/setup/build-components.sh
 source $script_directory/setup/build-components.sh
+
+# Create netty backend image and push to ECR
+chmod +x $script_directory/netty/netty-make-image.sh
+source $script_directory/netty/netty-make-image.sh
 
