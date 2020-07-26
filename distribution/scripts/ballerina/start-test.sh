@@ -14,65 +14,49 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Start netty server inside docker image
+# Start ballerina server inside docker image
 # ----------------------------------------------------------------------------
 
-jar_name=""
-default_heap_size="4g"
-heap_size="$default_heap_size"
+netty_host=""
+test_name=""
 
 function usage() {
     echo ""
     echo "Usage: "
-    echo "$0 [-m <heap_size>] [-h] -- [netty_service_flags]"
+    echo "$0 [-n <Adress of netty host>] [-t <Name of the test>] [-h]"
     echo ""
-    echo "-m: The heap memory size of Netty Service. Default: $default_heap_size"
-    echo "-j: Name of the netty jar."
+    echo "-n: Address of the netty backend"
+    echo "-t: Name of the test"
     echo "-h: Display this help and exit."
     echo ""
 }
 
-while getopts "m:j:h" opts; do
-    case $opts in
-    m)
-        heap_size=${OPTARG}
+while getopts "t:n:h" opt; do
+    case "${opt}" in
+    t)
+        test_name=${OPTARG}
         ;;
-    j)
-        jar_name=${OPTARG}
+    n)
+        netty_host=${OPTARG}
         ;;
     h)
         usage
         exit 0
         ;;
     \?)
-        usage
-        exit 1
+        echo "Invalid option -$OPTARG" >&2
         ;;
     esac
 done
-shift "$((OPTIND - 1))"
 
-netty_service_flags="$@"
-
-if [[ -z $heap_size ]]; then
-    echo "Please specify the heap size."
+if [[ -z $netty_host ]]; then
+    echo "Please provide the hostname of Netty Service."
     exit 1
 fi
 
-if [[ -z $jar_name ]]; then
-    echo "Please specify the name of the netty jar"
+if [[ -z $test_name ]]; then
+    echo "Please provide the name of the test."
     exit 1
 fi
 
-gc_log_file=./logs/nettygc.log
-
-if [[ -f $gc_log_file ]]; then
-    echo "GC Log exists. Moving $gc_log_file to /tmp"
-    mv $gc_log_file /tmp/
-fi
-
-mkdir -p logs
-
-echo "Starting Netty"
-nohup java -Xms${heap_size} -Xmx${heap_size} -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$gc_log_file \
-    -jar $jar_name $netty_service_flags >netty.out 2>&1
+java -jar $test_name.jar --b7a.netty=$netty_host

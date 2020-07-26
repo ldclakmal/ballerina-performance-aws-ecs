@@ -66,3 +66,7 @@ source $script_directory/setup/build-components.sh
 chmod +x $script_directory/netty/netty-make-image.sh
 source $script_directory/netty/netty-make-image.sh
 
+# Run h1c_h1c_passthrough test
+chmod +x $script_directory/ballerina/bal-make-image.sh
+source $script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough
+

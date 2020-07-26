@@ -44,7 +44,7 @@ cd $home_directory
 
 # Push image to ECR
 chmod +x $script_directory/docker/push-image.sh
-source $script_directory/docker/push-image.sh -d $netty_directory -i $netty_service_name
+source $script_directory/docker/push-image.sh -d $netty_directory -i $netty_image_name
 
 
 
