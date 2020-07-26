@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # Copyright 2020 WSO2 Inc. (http://wso2.org)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,8 +32,5 @@ mkdir /home/ubuntu/bal-directory
 
 bsdtar --strip-components=1 -C /home/ubuntu/bal-directory -xvf /home/ubuntu/ballerina-zip.zip
 
-if command -v $bal_directory/ballerina >/dev/null 2>&1; then
-    echo "Ballerina wasn't installed properly"
-    exit 1
-fi
+export PATH="/home/ubuntu/bal-directory/bin:$PATH"
 

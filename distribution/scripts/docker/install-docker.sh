@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
 # Copyright (c) 2020, WSO2 Inc. (http://wso2.org) All Rights Reserved.
 #
 # WSO2 Inc. licenses this file to you under the Apache License,
@@ -19,24 +19,6 @@
 # Installation script for setting up docker on Linux.
 # ----------------------------------------------------------------------------
 
-default_user=""
-if [[ ! -z $SUDO_USER ]]; then
-    default_user="$SUDO_USER"
-else
-    default_user="ubuntu"
-fi
-user="$default_user"
-
-function usage() {
-    echo ""
-    echo "Usage: "
-    echo "$0 [-u <user>] [-h]"
-    echo ""
-    echo "-u: Target user. Default: $default_user."
-    echo "-h: Display this help and exit."
-    echo ""
-}
-
 # Make sure the script is running as root.
 if [ "$UID" -ne "0" ]; then
     echo "You must be root to run $0. Try following"
@@ -44,21 +26,13 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
-while getopts "u:h" opts; do
-    case $opts in
-    u)
-        user=${OPTARG}
-        ;;
-    h)
-        usage
-        exit 0
-        ;;
-    \?)
-        usage
-        exit 1
-        ;;
-    esac
-done
+default_user=""
+if [[ ! -z $SUDO_USER ]]; then
+    default_user="$SUDO_USER"
+else
+    default_user="ubuntu"
+fi
+user="$default_user"
 
 if ! command -v docker >/dev/null 2>&1; then
     echo "docker is not installed! Installing docker.."

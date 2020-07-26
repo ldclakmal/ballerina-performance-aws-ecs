@@ -1,5 +1,5 @@
-#!/bin/bash
-# Copyright 2017 WSO2 Inc. (http://wso2.org)
+#!/bin/bash -e
+# Copyright 2020 WSO2 Inc. (http://wso2.org)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ if [[ -z $image_name ]]; then
     exit 1
 fi
 
-if [! -f "$dockerfile_location/dockerfile" ]; then
+if [[ ! -f "$dockerfile_location/Dockerfile" ]]; then
     echo "Dockerfile missing in directory."
     exit 1
 fi
