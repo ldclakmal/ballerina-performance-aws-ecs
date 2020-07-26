@@ -32,11 +32,11 @@ fi
 
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "home/ubuntu/awscliv2.zip"
 
-sudo bsdtar -C /home/ubuntu -xvf /home/ubuntu/awscliv2.zip
+bsdtar -C /home/ubuntu -xvf /home/ubuntu/awscliv2.zip
 
-sudo /home/ubuntu/aws/install
+/home/ubuntu/aws/install
 
-if command -v aws >/dev/null 2>&1; then
+if ! command /home/ubuntu/aws/install; then
     echo "AWS CLI wasn't installed properly"
     exit 1
 fi
