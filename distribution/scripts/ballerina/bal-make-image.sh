@@ -43,11 +43,6 @@ while getopts "t:h" opt; do
     esac
 done
 
-if [[ -z $test_name ]]; then
-    echo "Please provide the name of the test."
-    exit 1
-fi
-
 test_directory="$bal_directory/tests/$test_name"
 
 cd $test_directory
