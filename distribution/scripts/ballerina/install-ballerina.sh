@@ -32,5 +32,5 @@ mkdir /home/ubuntu/bal-directory
 
 bsdtar --strip-components=1 -C /home/ubuntu/bal-directory -xvf /home/ubuntu/ballerina-zip.zip
 
-export PATH="$bal_directory:$PATH"
+export PATH="/home/ubuntu/bal-directory/bin:$PATH"
 
