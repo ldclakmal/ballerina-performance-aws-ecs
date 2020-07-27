@@ -77,6 +77,7 @@ echo "ENTRYPOINT ./start-test.sh -n $NETTY_HOST -t $test_name" >> Dockerfile
 cd $home_directory
 
 # Push image to ECR
+chmod +x $script_directory/docker/push-image.sh
 source $script_directory/docker/push-image.sh -d $test_directory -i $test_name
 
 
