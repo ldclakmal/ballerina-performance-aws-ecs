@@ -16,7 +16,7 @@
 # ----------------------------------------------------------------------------
 # Create ballerina docker image
 # ----------------------------------------------------------------------------
-bal_directory="$script_directory/ballerina"
+bal_script_directory="$script_directory/ballerina"
 test_name=""
 
 function usage() {
@@ -43,7 +43,11 @@ while getopts "t:h" opt; do
     esac
 done
 
-test_directory="$bal_directory/tests/$test_name"
+if [[ -z $test_name ]]; then
+    echo "Please provide the name of the test $test_name to start building image."
+fi
+
+test_directory="$bal_script_directory/tests/$test_name"
 
 cd $test_directory
 
@@ -64,7 +68,7 @@ echo "ENV NETTY_HOST """ >> Dockerfile
 
 echo "COPY $test_name.jar ." >> Dockerfile
 
-cp $bal_directory/start-test.sh .
+cp $bal_script_directory/start-test.sh .
 
 echo "COPY start-test.sh ." >> Dockerfile
 
