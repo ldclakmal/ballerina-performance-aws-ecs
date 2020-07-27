@@ -60,5 +60,5 @@ source $script_directory/setup/install-awscli.sh
 
 # Run h1c_h1c_passthrough test
 chmod +x $script_directory/ballerina/bal-make-image.sh
-source $script_directory/ballerina/bal-make-image.sh
+source $script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough
 
