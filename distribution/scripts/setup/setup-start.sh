@@ -54,22 +54,6 @@ source $script_directory/java/install-java.sh
 chmod +x $script_directory/ballerina/install-ballerina.sh
 source $script_directory/ballerina/install-ballerina.sh
 
-cd /home
-ls
-echo " "
-cd /home/ubuntu
-ls
-echo " "
-cd /home/ubuntu/bal-directory
-ls
-echo " "
-cd /home/ubuntu/bal-directory/bin
-ls
-echo " "
-chmod +x ballerina
-./ballerina
-
-
 # Run h1c_h1c_passthrough test
 chmod +x $script_directory/ballerina/bal-make-image.sh
 source $script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough

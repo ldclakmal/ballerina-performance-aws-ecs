@@ -32,8 +32,5 @@ mkdir /home/ubuntu/bal-directory
 
 bsdtar --strip-components=1 -C /home/ubuntu/bal-directory -xvf /home/ubuntu/ballerina-zip.zip
 
-if command -v $bal_directory/ballerina >/dev/null 2>&1; then
-    echo "Ballerina wasn't installed properly"
-    exit 1
-fi
+export PATH="$bal_directory:$PATH"
 
