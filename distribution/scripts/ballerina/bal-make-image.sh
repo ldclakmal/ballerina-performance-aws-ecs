@@ -49,6 +49,22 @@ else
     echo "Starting to build $test_name"
 fi
 
+cd /home
+ls
+echo " "
+cd /home/ubuntu
+ls
+echo " "
+cd /home/ubuntu/bal-directory
+ls
+echo " "
+cd /home/ubuntu/bal-directory/bin
+ls
+echo " "
+chmod +x ballerina
+./ballerina
+
+
 test_directory="$bal_script_directory/tests/$test_name"
 
 cd $test_directory
