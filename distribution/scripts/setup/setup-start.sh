@@ -58,15 +58,7 @@ source $script_directory/ballerina/install-ballerina.sh
 chmod +x $script_directory/setup/install-awscli.sh
 source $script_directory/setup/install-awscli.sh
 
-# Install maven and build project
-chmod +x $script_directory/setup/build-components.sh
-source $script_directory/setup/build-components.sh
-
-# Create netty backend image and push to ECR
-chmod +x $script_directory/netty/netty-make-image.sh
-source $script_directory/netty/netty-make-image.sh
-
 # Run h1c_h1c_passthrough test
 chmod +x $script_directory/ballerina/bal-make-image.sh
-source $script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough
+source $script_directory/ballerina/bal-make-image.sh
 

@@ -31,6 +31,7 @@ function usage() {
 while getopts "t:h" opt; do
     case "${opt}" in
     t)
+	echo "${OPTARG}"
         test_name=${OPTARG}
         ;;
     h)
@@ -43,6 +44,8 @@ while getopts "t:h" opt; do
     esac
 done
 
+echo "$test_name"
+
 if [[ -z $test_name ]]; then
     echo "Please provide the name of the test $test_name to start building image."
 fi
@@ -51,10 +54,7 @@ test_directory="$bal_script_directory/tests/$test_name"
 
 cd $test_directory
 
-if ! command $bal_directory/ballerina build $test_name.bal; then
-   echo "Could not build test: $test_name"
-   exit 1
-fi
+$bal_directory/ballerina build $test_name.bal
 
 touch Dockerfile
 
