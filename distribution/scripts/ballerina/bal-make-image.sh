@@ -53,7 +53,7 @@ test_directory="$bal_script_directory/tests/$test_name"
 
 cd $test_directory
 
-home/ubuntu/bal-directory/bin/ballerina build $test_name.bal
+$bal_directory/ballerina build $test_name.bal
 
 touch Dockerfile
 
