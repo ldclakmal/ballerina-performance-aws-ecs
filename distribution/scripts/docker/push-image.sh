@@ -1,5 +1,5 @@
-#!/bin/sh
-# Copyright 2017 WSO2 Inc. (http://wso2.org)
+#!/bin/bash
+# Copyright 2020 WSO2 Inc. (http://wso2.org)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
