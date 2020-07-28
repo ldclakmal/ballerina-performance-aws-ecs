@@ -26,6 +26,14 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
+default_user=""
+if [[ ! -z $SUDO_USER ]]; then
+    default_user="$SUDO_USER"
+else
+    default_user="ubuntu"
+fi
+user="$default_user"
+
 if ! command -v docker >/dev/null 2>&1; then
     echo "docker is not installed! Installing docker.."
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
