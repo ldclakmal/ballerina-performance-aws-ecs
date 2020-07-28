@@ -64,7 +64,7 @@ echo "USER root" >> Dockerfile
 
 echo "RUN apk add openjdk8=8.242.08-r2" >> Dockerfile
 
-echo "ENV NETTY_HOST """ >> Dockerfile
+echo "ENV NETTY_HOST \"\"" >> Dockerfile
 
 echo "COPY $test_name.jar ." >> Dockerfile
 
@@ -72,7 +72,7 @@ cp $bal_script_directory/start-test.sh .
 
 echo "COPY start-test.sh ." >> Dockerfile
 
-echo "ENTRYPOINT ./start-test.sh -n $NETTY_HOST -t $test_name" >> Dockerfile
+echo "ENTRYPOINT ./start-test.sh -n \$NETTY_HOST -t $test_name" >> Dockerfile
 
 cd $home_directory
 

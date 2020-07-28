@@ -65,7 +65,7 @@ if [[ -z $image_name ]]; then
     exit 1
 fi
 
-if [! -f "$dockerfile_location/dockerfile" ]; then
+if [[ ! -f "$dockerfile_location/dockerfile" ]]; then
     echo "Dockerfile missing in directory."
     exit 1
 fi
