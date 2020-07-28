@@ -54,6 +54,8 @@ test_directory="$bal_script_directory/tests/$test_name"
 
 cd $test_directory
 
+export PATH="/home/ubuntu/bal-directory/bin:$PATH"
+
 ballerina build $test_name.bal
 
 touch Dockerfile
