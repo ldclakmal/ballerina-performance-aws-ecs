@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # Copyright 2017 WSO2 Inc. (http://wso2.org)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,7 @@ cd $home_directory
 
 # Push image to ECR
 chmod +x $script_directory/docker/push-image.sh
-source $script_directory/docker/push-image.sh -d $netty_directory -i $netty_image_name
+$script_directory/docker/push-image.sh -d $netty_directory -i $netty_image_name
 
 
 

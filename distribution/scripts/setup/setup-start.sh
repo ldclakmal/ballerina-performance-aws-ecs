@@ -44,27 +44,27 @@ fi
 
 # Install docker
 chmod +x $script_directory/docker/install-docker.sh
-source $script_directory/docker/install-docker.sh
+$script_directory/docker/install-docker.sh
 
 # Install Java
 chmod +x $script_directory/java/install-java.sh
-source $script_directory/java/install-java.sh
+$script_directory/java/install-java.sh
 
 # Install Ballerina
 chmod +x $script_directory/ballerina/install-ballerina.sh
-source $script_directory/ballerina/install-ballerina.sh
+$script_directory/ballerina/install-ballerina.sh
 
-# # Insall the AWS CLI
-# chmod +x $script_directory/setup/install-awscli.sh
-# source $script_directory/setup/install-awscli.sh
+# Insall the AWS CLI
+chmod +x $script_directory/setup/install-awscli.sh
+$script_directory/setup/install-awscli.sh
 
-# # Install maven and build project
-# chmod +x $script_directory/setup/build-components.sh
-# source $script_directory/setup/build-components.sh
+# Install maven and build project
+chmod +x $script_directory/setup/build-components.sh
+$script_directory/setup/build-components.sh
 
-# # Create netty backend image and push to ECR
-# chmod +x $script_directory/netty/netty-make-image.sh
-# source $script_directory/netty/netty-make-image.sh
+# Create netty backend image and push to ECR
+chmod +x $script_directory/netty/netty-make-image.sh
+$script_directory/netty/netty-make-image.sh
 
 # Run h1c_h1c_passthrough test
 chmod +x $script_directory/ballerina/bal-make-image.sh
