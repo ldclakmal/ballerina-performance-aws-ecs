@@ -349,9 +349,6 @@ Resources:
               awslogs-group: 'perf-test'
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: 'jmeter-test'
-          MountPoints:
-            - ContainerPath: /results
-              SourceVolume: ecs-fs
       Tags:
         - Key: Name
           Value: !Join
