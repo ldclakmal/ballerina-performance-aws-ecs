@@ -17,14 +17,4 @@
 # Create a cloudformation stack for ECS
 # ----------------------------------------------------------------------------
 
-aws cloudformation create-stack --stack-name ecs-stack --template-body file://home/ubuntu/ballerina-performance-aws-ecs/distribution/scripts/cloudFormation/Templates/ecs_cfn.yaml --parameters \
-ParameterKey=UserEmail,ParameterValue=daksith@wso2.com \
-ParameterKey=PrivateSubnet,ParameterValue=subnet-09c7fc5a5ffe5dec3 \
-ParameterKey=PublicSubnet,ParameterValue=subnet-08b639feb926b17d1 \
-ParameterKey=NettyImage,ParameterValue=134633749276.dkr.ecr.us-east-2.amazonaws.com/netty-backend:latest \
-ParameterKey=TestImage,ParameterValue=134633749276.dkr.ecr.us-east-2.amazonaws.com/h1c_h1c_passthrough:latest \
-ParameterKey=JMeterImage,ParameterValue=134633749276.dkr.ecr.us-east-2.amazonaws.com/jmeter_client:latest \
-ParameterKey=SecurityGroup,ParameterValue=MyKey \
-ParameterKey=VPC,ParameterValue=sg-039f7aaaa9d23b73f \
-ParameterKey=BalMemory,ParameterValue=2048 \
-ParameterKey=BalCPU,ParameterValue=1024
+aws cloudformation create-stack --stack-name ecs-stack --template-body file://$PWD/ecs_cfn.yaml --parameters file://$PWD/params.json
