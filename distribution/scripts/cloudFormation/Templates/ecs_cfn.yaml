@@ -337,6 +337,9 @@ Resources:
       ContainerDefinitions:
         - Name: JMeter-container
           Image: !Ref JMeterImage
+          PortMappings:
+            - ContainerPort: 80
+              Protocol: tcp
           Environment:
             - Name: HOST_NAME 
               Value: !GetAtt LoadBalancer.DNSName
