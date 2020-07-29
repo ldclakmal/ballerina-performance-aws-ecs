@@ -24,15 +24,44 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
+# Git repo link
+git_repo="https://daksithj:85351a39913458d12edb15f8f9ad0ed576d8251e@github.com/ldclakmal/ballerina-performance-aws-ecs.git"
+
+# Component versions (maven)
+export version="0.1.0-SNAPSHOT"
+
+# Download Links
+export bal_download_link="https://dist.ballerina.io/downloads/swan-lake-preview2/ballerina-swan-lake-preview2.zip"
+export JMeter_download_link="https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.3.tgz"
+export aws_cli_download_link="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+
+# AWS components
+export aws_ecr_link="134633749276.dkr.ecr.us-east-2.amazonaws.com"
+export aws_region="us-east-2"
+
+# Directories
+export home_directory="/home/ubuntu"
 export repo_directory="/home/ubuntu/ballerina-performance-aws-ecs"
 export script_directory="$repo_directory/distribution/scripts"
 export bal_directory=="/home/ubuntu/bal-directory/bin"
-export aws_ecr_link="134633749276.dkr.ecr.us-east-2.amazonaws.com"
-export aws_region="us-east-2"
-export home_directory="/home/ubuntu"
+
+# Options for the JMeter client
+    # -m: Application heap memory sizes. You can give multiple options to specify multiple heap memory sizes. Allowed suffixes: M, G.
+    # -u: Concurrent Users to test. You can give multiple options to specify multiple users.
+    # -b: Message sizes in bytes. You can give multiple options to specify multiple message sizes.
+    # -d: Test Duration in seconds. Default 900s.
+    # -w: Warm-up time in seconds. Default 300s.
+    # -k: Heap Size of JMeter Client. Allowed suffixes: M, G. Default 2G.
+    # -l: Heap Size of Netty Service. Allowed suffixes: M, G. 4G.
+    # -i: Scenario name to to be included. You can give multiple options to filter scenarios.
+    # -e: Scenario name to to be excluded. You can give multiple options to filter scenarios.
+    # -t: Estimate time without executing tests.
+    # -p: Estimated processing time in between tests in seconds. Default $default_estimated_processing_time_in_between_tests.
+    # -h: Display this help and exit.
+export JMeter_options="-u 50 -u 100 -b 50 -b 1024 -m 2G -d 30 -w 10"
 
 # Start by cloning the performance test repository
-git clone https://daksithj:85351a39913458d12edb15f8f9ad0ed576d8251e@github.com/ldclakmal/ballerina-performance-aws-ecs.git $repo_directory
+git clone $git_repo $repo_directory
 if [ ! -d $repo_directory ]; then
   echo "Could not pull the ecs performance test repository."
   exit 1
@@ -51,11 +80,10 @@ chmod +x $script_directory/java/install-java.sh
 $script_directory/java/install-java.sh
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre
 
-
 # Install Ballerina
 chmod +x $script_directory/ballerina/install-ballerina.sh
 $script_directory/ballerina/install-ballerina.sh
-export PATH="/home/ubuntu/bal-directory/bin:$PATH"
+export PATH="$bal_directory:$PATH"
 
 # Insall the AWS CLI
 chmod +x $script_directory/setup/install-awscli.sh
@@ -69,7 +97,10 @@ $script_directory/setup/build-components.sh
 chmod +x $script_directory/netty/netty-make-image.sh
 $script_directory/netty/netty-make-image.sh
 
-# Run h1c_h1c_passthrough test
+# Create h1c_h1c_passthrough test
 chmod +x $script_directory/ballerina/bal-make-image.sh
 $script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough
 
+# Create JMeter client
+chmod +x $script_directory/jmeter/jmeter-make-image.sh
+$script_directory/jmeter/jmeter-make-image.sh
