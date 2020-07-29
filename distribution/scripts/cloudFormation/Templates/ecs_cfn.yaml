@@ -37,6 +37,9 @@ Parameters:
   PrivateSubnet:
     Type: String
     Description: ID of the private subnet
+  PublicSubnet:
+    Type: String
+    Description: ID of the public subnet
   NettyImage:
     Type: String
     Description: URI of the netty image on ECR
