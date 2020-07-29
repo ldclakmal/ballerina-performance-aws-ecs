@@ -55,4 +55,4 @@ cd $home_directory
 
 # Push image to ECR
 chmod +x $script_directory/docker/push-image.sh
-$script_directory/docker/push-image.sh -d $JMeter_directory -i JMeter_Client
+$script_directory/docker/push-image.sh -d $JMeter_directory -i jmeter_client
