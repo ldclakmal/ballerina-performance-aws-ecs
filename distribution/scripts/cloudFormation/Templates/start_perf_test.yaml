@@ -377,6 +377,7 @@ Resources:
           export file_system_directory="/mnt/efs/"
           export test_memory="${BalMemory}"
           export test_cpu="${BalCPU}"
+          export user_email="${UserEmail}"
           apt-get update
           apt-get install -y curl nfs-common
           mkdir $file_system_directory
