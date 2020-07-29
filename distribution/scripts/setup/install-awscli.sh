@@ -30,7 +30,7 @@ if ! command -v mvn >/dev/null 2>&1; then
     apt -y install maven
 fi
 
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "home/ubuntu/awscliv2.zip"
+curl "$aws_cli_download_link" -o "home/ubuntu/awscliv2.zip"
 
 bsdtar -C /home/ubuntu -xvf /home/ubuntu/awscliv2.zip
 

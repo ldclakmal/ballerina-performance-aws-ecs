@@ -19,7 +19,6 @@
 jar_directory="$repo_directory/components/netty-http-echo-service/target"
 netty_directory="$script_directory/netty"
 netty_service_name="netty-http-echo-service"
-netty_version="0.1.0-SNAPSHOT"
 netty_image_name="netty-backend"
 
 cd $netty_directory
@@ -32,13 +31,13 @@ echo "USER root" >> Dockerfile
 
 echo "RUN apk add openjdk8=8.242.08-r2" >> Dockerfile
 
-cp $jar_directory/$netty_service_name-$netty_version.jar .
+cp $jar_directory/$netty_service_name-$version.jar .
 
-echo "COPY $netty_service_name-$netty_version.jar ." >> Dockerfile
+echo "COPY $netty_service_name-$version.jar ." >> Dockerfile
 
 echo "COPY start-netty.sh ." >> Dockerfile
 
-echo "ENTRYPOINT ./start-netty.sh -j $netty_service_name-$netty_version.jar" >> Dockerfile
+echo "ENTRYPOINT ./start-netty.sh -j $netty_service_name-$version.jar" >> Dockerfile
 
 cd $home_directory
 

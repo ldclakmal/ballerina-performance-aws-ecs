@@ -17,21 +17,21 @@
 <FindBugsFilter>
     <Match>
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
-        <Class name="org.wso2.performance.common.jtl.splitter.JTLFileValidator"/>
+        <Class name="org.wso2.performance.ecs.jtl.splitter.JTLFileValidator"/>
         <Method name="validate"/>
     </Match>
     <Match>
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
-        <Class name="org.wso2.performance.common.jtl.splitter.JTLSplitter"/>
+        <Class name="org.wso2.performance.ecs.jtl.splitter.JTLSplitter"/>
         <Method name="splitJTL"/>
     </Match>
     <Match>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
-        <Class name="org.wso2.performance.common.jtl.splitter.JTLSplitter"/>
+        <Class name="org.wso2.performance.ecs.jtl.splitter.JTLSplitter"/>
         <Method name="splitJTL"/>
     </Match>
     <Match>
         <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
-        <Class name="org.wso2.performance.common.netty.echo.Http2HandlerBuilder"/>
+        <Class name="org.wso2.performance.ecs.netty.echo.Http2HandlerBuilder"/>
     </Match>
 </FindBugsFilter>

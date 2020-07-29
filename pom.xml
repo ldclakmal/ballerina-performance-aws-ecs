@@ -42,6 +42,7 @@
     <modules>
         <module>components/payload-generator</module>
         <module>components/netty-http-echo-service</module>
+        <module>components/jtl-splitter</module>
     </modules>
 
     <repositories>
@@ -128,6 +129,11 @@
             <dependency>
                 <groupId>org.wso2.performance.ecs</groupId>
                 <artifactId>payload-generator</artifactId>
+                <version>${performance.ecs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.performance.ecs</groupId>
+                <artifactId>jtl-splitter</artifactId>
                 <version>${performance.ecs.version}</version>
             </dependency>
             <!-- Distribution Dependencies - End -->
