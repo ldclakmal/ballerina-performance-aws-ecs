@@ -83,7 +83,7 @@ export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre
 # Install Ballerina
 chmod +x $script_directory/ballerina/install-ballerina.sh
 $script_directory/ballerina/install-ballerina.sh
-export PATH="$bal_directory:$PATH"
+export PATH="/home/ubuntu/bal-directory/bin:$PATH"
 
 # Insall the AWS CLI
 chmod +x $script_directory/setup/install-awscli.sh
