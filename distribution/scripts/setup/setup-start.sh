@@ -33,7 +33,6 @@ export aws_cli_download_link="https://awscli.amazonaws.com/awscli-exe-linux-x86_
 
 # AWS components
 export aws_ecr_link="134633749276.dkr.ecr.us-east-2.amazonaws.com"
-export aws_region="us-east-2"
 
 # Directories
 export home_directory="/home/ubuntu"

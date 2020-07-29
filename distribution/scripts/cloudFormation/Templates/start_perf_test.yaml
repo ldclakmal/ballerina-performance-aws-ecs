@@ -56,6 +56,74 @@ Parameters:
     Description: Options for JMeter
     Type: String
     ConstraintDescription: A string of options for JMeter.
+  BalMemory:
+    Type: String
+    Description: Memory Constraint for the test.
+    Default: "2048"
+  BalCPU:
+    Type: String
+    Description: CPU Constraint for the test.
+    Default: "1024"
+  InstanceType:
+    Description: WebServer EC2 instance type
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t1.micro
+      - t2.nano
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+      - m1.small
+      - m1.medium
+      - m1.large
+      - m1.xlarge
+      - m2.xlarge
+      - m2.2xlarge
+      - m2.4xlarge
+      - m3.medium
+      - m3.large
+      - m3.xlarge
+      - m3.2xlarge
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - c1.medium
+      - c1.xlarge
+      - c3.large
+      - c3.xlarge
+      - c3.2xlarge
+      - c3.4xlarge
+      - c3.8xlarge
+      - c4.large
+      - c4.xlarge
+      - c4.2xlarge
+      - c4.4xlarge
+      - c4.8xlarge
+      - g2.2xlarge
+      - g2.8xlarge
+      - r3.large
+      - r3.xlarge
+      - r3.2xlarge
+      - r3.4xlarge
+      - r3.8xlarge
+      - i2.xlarge
+      - i2.2xlarge
+      - i2.4xlarge
+      - i2.8xlarge
+      - d2.xlarge
+      - d2.2xlarge
+      - d2.4xlarge
+      - d2.8xlarge
+      - hi1.4xlarge
+      - hs1.8xlarge
+      - cr1.8xlarge
+      - cc2.8xlarge
+      - cg1.4xlarge
+    ConstraintDescription: must be a valid EC2 instance type.
 ################################
 # Create AWS resources
 ################################
@@ -279,12 +347,15 @@ Resources:
     DependsOn: MountTarget
     Properties:
       ImageId: ami-0a63f96e85105c6d3
-      InstanceType: t2.micro
+      InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
       IamInstanceProfile: !Ref EC2InstanceProfile
       Tags:
         - Key: Name
-          Value: '{{ name }}'
+          Value: !Join
+            - ':'
+            - - 'EC2Instance'
+              - !Ref AWS::StackName
         - Key: User
           Value: !Ref UserEmail
       NetworkInterfaces:
@@ -299,8 +370,17 @@ Resources:
           #!/bin/bash -xe
           export repo_directory="/home/ubuntu/ballerina-performance-aws-ecs"
           export script_directory="$repo_directory/distribution/scripts"
-          export bal_download_link=${BalURL}
-          export JMeter_options=${JMeterOptions}
+          export bal_download_link="${BalURL}"
+          export JMeter_options="${JMeterOptions}"
+          export file_system="${FileSystem}"
+          export aws_region="${AWS::Region}"
+          export file_system_directory="/mnt/efs/"
+          export test_memory="${BalMemory}"
+          export test_cpu="${BalCPU}"
+          apt-get update
+          apt-get install -y curl nfs-common
+          mkdir $file_system_directory
+          mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 $file_system.efs.$aws_region.amazonaws.com:/ $file_system_directory
           # Start by cloning the performance test repository
           git clone ${GitURL} $repo_directory
           if [ ! -d $repo_directory ]; then
@@ -313,6 +393,3 @@ Resources:
           fi
           chmod +x $script_directory/setup/setup-start.sh
           $script_directory/setup/setup-start.sh
-    CreationPolicy:
-      ResourceSignal:
-        Timeout: PT30M
