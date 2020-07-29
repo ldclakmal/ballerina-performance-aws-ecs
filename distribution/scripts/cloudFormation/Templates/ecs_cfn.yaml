@@ -337,9 +337,6 @@ Resources:
       ContainerDefinitions:
         - Name: JMeter-container
           Image: !Ref JMeterImage
-          PortMappings:
-            - ContainerPort: 8080
-              Protocol: tcp
           Environment:
             - Name: HOST_NAME 
               Value: !GetAtt LoadBalancer.DNSName
@@ -349,6 +346,9 @@ Resources:
               awslogs-group: 'perf-test'
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: 'jmeter-test'
+          MountPoints:
+            - ContainerPath: /results
+              SourceVolume: ecs-fs
       Tags:
         - Key: Name
           Value: !Join
