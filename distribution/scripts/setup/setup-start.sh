@@ -39,21 +39,6 @@ export aws_region="us-east-2"
 export home_directory="/home/ubuntu"
 export bal_directory=="/home/ubuntu/bal-directory/bin"
 
-# Options for the JMeter client
-    # -m: Application heap memory sizes. You can give multiple options to specify multiple heap memory sizes. Allowed suffixes: M, G.
-    # -u: Concurrent Users to test. You can give multiple options to specify multiple users.
-    # -b: Message sizes in bytes. You can give multiple options to specify multiple message sizes.
-    # -d: Test Duration in seconds. Default 900s.
-    # -w: Warm-up time in seconds. Default 300s.
-    # -k: Heap Size of JMeter Client. Allowed suffixes: M, G. Default 2G.
-    # -l: Heap Size of Netty Service. Allowed suffixes: M, G. 4G.
-    # -i: Scenario name to to be included. You can give multiple options to filter scenarios.
-    # -e: Scenario name to to be excluded. You can give multiple options to filter scenarios.
-    # -t: Estimate time without executing tests.
-    # -p: Estimated processing time in between tests in seconds. Default $default_estimated_processing_time_in_between_tests.
-    # -h: Display this help and exit.
-export JMeter_options="-u 50 -u 100 -b 50 -b 1024 -m 2G -d 30 -w 10"
-
 # Install docker
 chmod +x $script_directory/docker/install-docker.sh
 $script_directory/docker/install-docker.sh
