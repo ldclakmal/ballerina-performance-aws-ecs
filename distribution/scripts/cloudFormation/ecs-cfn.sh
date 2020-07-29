@@ -17,4 +17,5 @@
 # Create a cloudformation stack for ECS
 # ----------------------------------------------------------------------------
 
-aws cloudformation create-stack --stack-name ecs-stack --template-body file://$PWD/ecs_cfn.yaml --parameters file://$PWD/params.json
+cd $script_directory/cloudFormation/
+aws cloudformation create-stack --stack-name ecs-stack --template-body file://$PWD/templates/ecs_cfn.yaml --parameters file://$PWD/params.json

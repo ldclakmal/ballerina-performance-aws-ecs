@@ -38,6 +38,10 @@
       {
         "ParameterKey": "BalCPU",
         "ParameterValue": "1024"
+      },
+      {
+        "ParameterKey": "FileSystem",
+        "ParameterValue": "fs-932392eb"
       }
   ]
   

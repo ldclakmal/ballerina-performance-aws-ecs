@@ -61,6 +61,9 @@ Parameters:
   BalCPU:
     Type: String
     Description: CPU constraint for the test
+  FileSystem:
+    Type: String
+    Description: File System ID
 
     
 ################################
@@ -348,6 +351,9 @@ Resources:
               awslogs-group: 'perf-test'
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: 'jmeter-test'
+          MountPoints:
+            - ContainerPath: /results
+              SourceVolume: ecs-fs
       Tags:
         - Key: Name
           Value: !Join
@@ -356,29 +362,8 @@ Resources:
               - !Ref AWS::StackName
         - Key: User
           Value: !Ref UserEmail
-  JMeterService:
-    Type: AWS::ECS::Service
-    Properties:
-      ServiceName: jmeter-service
-      TaskDefinition: !Ref JMeterTask
-      Cluster: !Ref ECSCluster
-      LaunchType: FARGATE
-      DesiredCount: 1
-      DeploymentConfiguration:
-        MaximumPercent: 200
-        MinimumHealthyPercent: 100
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-          AssignPublicIp: ENABLED
-          Subnets:
-            - !Ref PublicSubnet
-          SecurityGroups:
-            - !Ref SecurityGroup
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'JMeterService'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
+      Volumes:
+        - Name: ecs-fs
+          efsVolumeConfiguration:
+            - fileSystemId: !Ref FileSystem
+              

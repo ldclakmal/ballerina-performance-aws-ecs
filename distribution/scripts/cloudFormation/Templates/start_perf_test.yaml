@@ -153,6 +153,12 @@ Resources:
                 - 'ecr:*'
                 # Read Access to cloudtrail
                 - 'cloudtrail:LookupEvents'
+                # ECS Tasks to download images from ECR
+                - 'cloudformation:*'
+                # IAM role creation
+                - 'iam:*'
+                # ECS Tasks to download images from ECR
+                - 'elasticloadbalancing:*'
               Resource: '*'
         - PolicyName: AWSCloudFormationFullAccess 
           PolicyDocument:
