@@ -24,9 +24,6 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
-# Git repo link
-git_repo="https://daksithj:85351a39913458d12edb15f8f9ad0ed576d8251e@github.com/ldclakmal/ballerina-performance-aws-ecs.git"
-
 # Component versions (maven)
 export version="0.1.0-SNAPSHOT"
 
@@ -41,8 +38,6 @@ export aws_region="us-east-2"
 
 # Directories
 export home_directory="/home/ubuntu"
-export repo_directory="/home/ubuntu/ballerina-performance-aws-ecs"
-export script_directory="$repo_directory/distribution/scripts"
 export bal_directory=="/home/ubuntu/bal-directory/bin"
 
 # Options for the JMeter client
@@ -59,17 +54,6 @@ export bal_directory=="/home/ubuntu/bal-directory/bin"
     # -p: Estimated processing time in between tests in seconds. Default $default_estimated_processing_time_in_between_tests.
     # -h: Display this help and exit.
 export JMeter_options="-u 50 -u 100 -b 50 -b 1024 -m 2G -d 30 -w 10"
-
-# Start by cloning the performance test repository
-git clone $git_repo $repo_directory
-if [ ! -d $repo_directory ]; then
-  echo "Could not pull the ecs performance test repository."
-  exit 1
-fi
-if [ ! -d $script_directory ]; then
-  echo "Script directory not available"
-  exit 1
-fi
 
 # Install docker
 chmod +x $script_directory/docker/install-docker.sh
