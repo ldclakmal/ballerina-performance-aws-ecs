@@ -267,7 +267,7 @@ Resources:
     Type: AWS::EFS::MountTarget
     Properties: 
       FileSystemId: !Ref FileSystem
-      SubnetId: !Ref MountPublicSubnet
+      SubnetId: !Ref PublicSubnet
       SecurityGroups: 
         - !Ref SecurityGroup
   ##########################################################################################
