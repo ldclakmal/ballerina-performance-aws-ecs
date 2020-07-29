@@ -28,7 +28,6 @@ fi
 export version="0.1.0-SNAPSHOT"
 
 # Download Links
-export bal_download_link="https://dist.ballerina.io/downloads/swan-lake-preview2/ballerina-swan-lake-preview2.zip"
 export JMeter_download_link="https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.3.tgz"
 export aws_cli_download_link="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
 

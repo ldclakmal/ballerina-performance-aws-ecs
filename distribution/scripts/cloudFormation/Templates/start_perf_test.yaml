@@ -48,6 +48,14 @@ Parameters:
     Description: URL for the github repo of the ballerina performance tests
     Type: String
     ConstraintDescription: must be the URL of the github repository.
+  BalURL:
+    Description: URL for the Ballerina zip file
+    Type: String
+    ConstraintDescription: must be the URL of the ballerina zip file.
+  JMeterOptions:
+    Description: Options for JMeter
+    Type: String
+    ConstraintDescription: A string of options for JMeter.
 ################################
 # Create AWS resources
 ################################
@@ -58,6 +66,14 @@ Resources:
   EC2ResourceAccessRole:
     Type: AWS::IAM::Role
     Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
       Path: /
       Policies:
         - PolicyName: AmazonEC2ContainerRegistryFullAccess 
@@ -70,7 +86,6 @@ Resources:
                 # Read Access to cloudtrail
                 - 'cloudtrail:LookupEvents'
               Resource: '*'
-                    Policies:
         - PolicyName: AWSCloudFormationFullAccess 
           PolicyDocument:
             Statement:
@@ -79,6 +94,12 @@ Resources:
                 # ECS Tasks to download images from ECR
                 - 'cloudformation:*'
               Resource: '*'
+  EC2InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref EC2ResourceAccessRole
   ##########################################################################################
   # Create VPC, public subnet and private subnet
   ##########################################################################################
@@ -225,15 +246,42 @@ Resources:
           CidrIp: 0.0.0.0/0
 
   ##########################################################################################
+  # Create File system
+  ##########################################################################################
+  FileSystem:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      Encrypted: false
+      FileSystemTags:
+        - Key: Name
+          Value: !Join
+            - ':'
+            - - 'FileSystem'
+              - !Ref AWS::StackName
+        - Key: User
+          Value: !Ref UserEmail
+      PerformanceMode: generalPurpose
+      ThroughputMode: bursting
+
+  MountTarget:
+    Type: AWS::EFS::MountTarget
+    Properties: 
+      FileSystemId: !Ref FileSystem
+      SubnetId: !Ref MountPublicSubnet
+      SecurityGroups: 
+        - !Ref SecurityGroup
+  ##########################################################################################
   # Create EC2 instance to start performance test
   ##########################################################################################
 
-Type: 'AWS::EC2::Instance'
-    DependsOn: [AttachGateway, BucketPolicy]
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    DependsOn: MountTarget
     Properties:
       ImageId: ami-0a63f96e85105c6d3
       InstanceType: t2.micro
       KeyName: !Ref KeyName
+      IamInstanceProfile: !Ref EC2InstanceProfile
       Tags:
         - Key: Name
           Value: '{{ name }}'
@@ -251,6 +299,8 @@ Type: 'AWS::EC2::Instance'
           #!/bin/bash -xe
           export repo_directory="/home/ubuntu/ballerina-performance-aws-ecs"
           export script_directory="$repo_directory/distribution/scripts"
+          export bal_download_link=${BalURL}
+          export JMeter_options=${JMeterOptions}
           # Start by cloning the performance test repository
           git clone ${GitURL} $repo_directory
           if [ ! -d $repo_directory ]; then
