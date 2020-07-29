@@ -34,6 +34,38 @@ Parameters:
     Description: Email address of the user creating this stack
     AllowedPattern: '[^\s@]+@[^\s@]+\.[^\s@]+'
     ConstraintDescription: You should enter a valid email
+  PrivateSubnet:
+    Type: String
+    Description: ID of the private subnet
+  PublicSubnet:
+    Type: String
+    Description: ID of the public subnet
+  NettyImage:
+    Type: String
+    Description: URI of the netty image on ECR
+  TestImage:
+    Type: String
+    Description: URI of the test image on ECR
+  JMeterImage:
+    Type: String
+    Description: URI of the JMeter image on ECR
+  SecurityGroup:
+    Type: String
+    Description: ID of the Security Group
+  VPC:
+    Type: String
+    Description: ID of the VPC
+  BalMemory:
+    Type: String
+    Description: Memory Constrain for the test
+  BalCPU:
+    Type: String
+    Description: CPU constraint for the test
+  FileSystem:
+    Type: String
+    Description: File System ID
+
+    
 ################################
 # Create AWS resources
 ################################
@@ -66,150 +98,7 @@ Resources:
                 - 'logs:CreateLogStream'
                 - 'logs:PutLogEvents'
               Resource: '*'
-  ##########################################################################################
-  # Create VPC, public subnet and private subnet
-  ##########################################################################################
-  VPC:
-    Type: 'AWS::EC2::VPC'
-    Properties:
-      CidrBlock: 10.0.0.0/16
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'VPC'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
-  # Configure Public Subnet
-  PublicSubnet:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: !Select
-        - 0
-        - Fn::GetAZs: !Ref 'AWS::Region'
-      CidrBlock: 10.0.0.0/24
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'PublicSubnet'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
-  InternetGateway:
-    Type: 'AWS::EC2::InternetGateway'
-    Properties:
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'InternetGateway'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
-  AttachGateway:
-    Type: 'AWS::EC2::VPCGatewayAttachment'
-    Properties:
-      VpcId: !Ref VPC
-      InternetGatewayId: !Ref InternetGateway
-  PublicRouteTable:
-    Type: 'AWS::EC2::RouteTable'
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'PublicRouteTable'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
-  PublicRoute:
-    Type: 'AWS::EC2::Route'
-    DependsOn: AttachGateway
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
-  PublicSubnetRouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      SubnetId: !Ref PublicSubnet
-      RouteTableId: !Ref PublicRouteTable
-  # Configure Private Subnet
-  PrivateSubnet:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: !Select
-        - 0
-        - Fn::GetAZs: !Ref 'AWS::Region'
-      CidrBlock: 10.0.1.0/24
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'PrivateSubnet'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
-  NatGateway:
-    Type: 'AWS::EC2::NatGateway'
-    DependsOn: AttachGateway
-    Properties:
-      AllocationId: !GetAtt
-        - NatGatewayIPAddress
-        - AllocationId
-      SubnetId: !Ref PublicSubnet
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'NatGateway'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
-  NatGatewayIPAddress:
-    Type: 'AWS::EC2::EIP'
-    DependsOn: AttachGateway
-    Properties:
-      Domain: vpc
-  PrivateRouteTable:
-    Type: 'AWS::EC2::RouteTable'
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'PrivateRouteTable'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
-  PrivateRoute:
-    Type: 'AWS::EC2::Route'
-    DependsOn: AttachGateway
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
-  PrivateSubnetRouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      SubnetId: !Ref PrivateSubnet
-      RouteTableId: !Ref PrivateRouteTable
-  SecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      VpcId: !Ref VPC
-      GroupDescription: Security Group for Fargate tasks
-      SecurityGroupIngress:
-        - IpProtocol: -1
-          CidrIp: 0.0.0.0/0
+ 
   ####################################################################
   # Create ECS Cluster and load balancer
   ####################################################################
@@ -248,15 +137,15 @@ Resources:
     Type: AWS::ECS::TaskDefinition
     Properties:
       Family: netty
-      Cpu: 512
-      Memory: 1024
+      Cpu: 2048
+      Memory: 4096
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       ContainerDefinitions:
         - Name: netty-container
-          Image: 134633749276.dkr.ecr.us-east-2.amazonaws.com/netty-echo-backend:latest
+          Image: !Ref NettyImage
           PortMappings:
             - ContainerPort: 8688
               Protocol: tcp
@@ -342,15 +231,15 @@ Resources:
     DependsOn: LoadBalancer
     Properties:
       Family: bal
-      Cpu: 512
-      Memory: 1024
+      Cpu: !Ref BalCPU
+      Memory: !Ref BalMemory
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       ContainerDefinitions:
         - Name: bal-container
-          Image: 134633749276.dkr.ecr.us-east-2.amazonaws.com/h1c-h1c-test:latest
+          Image: !Ref TestImage
           PortMappings:
             - ContainerPort: 9090
               Protocol: tcp
@@ -431,9 +320,51 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref BalTargetGroup
+  
   ####################################################################
   # Jmeter Client
   ####################################################################
+  # JMeterTask:
+  #   Type: AWS::ECS::TaskDefinition
+  #   DependsOn: LoadBalancer
+  #   Properties:
+  #     Family: JMeter
+  #     Cpu: 2048
+  #     Memory: 4096
+  #     NetworkMode: awsvpc
+  #     RequiresCompatibilities:
+  #       - FARGATE
+  #     ExecutionRoleArn: !Ref ECSTaskExecutionRole
+  #     ContainerDefinitions:
+  #       - Name: JMeter-container
+  #         Image: !Ref JMeterImage
+  #         PortMappings:
+  #           - ContainerPort: 80
+  #             Protocol: tcp
+  #         Environment:
+  #           - Name: HOST_NAME 
+  #             Value: !GetAtt LoadBalancer.DNSName
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: 'perf-test'
+  #             awslogs-region: !Ref AWS::Region
+  #             awslogs-stream-prefix: 'jmeter-test'
+  #         MountPoints:
+  #           - ContainerPath: /results
+  #             SourceVolume: ecs-fs
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Join
+  #           - ':'
+  #           - - 'JMeterTask'
+  #             - !Ref AWS::StackName
+  #       - Key: User
+  #         Value: !Ref UserEmail
+  #     Volumes:
+  #       - Name: ecs-fs
+  #         efsVolumeConfiguration:
+  #           - fileSystemId: !Ref FileSystem
   JMeterTask:
     Type: AWS::ECS::TaskDefinition
     DependsOn: LoadBalancer
@@ -447,7 +378,7 @@ Resources:
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       ContainerDefinitions:
         - Name: JMeter-container
-          Image: 134633749276.dkr.ecr.us-east-2.amazonaws.com/jmeter-client:latest
+          Image: !Ref JMeterImage
           Cpu: 512
           Memory: 1024
           PortMappings:
@@ -470,29 +401,9 @@ Resources:
               - !Ref AWS::StackName
         - Key: User
           Value: !Ref UserEmail
-  JMeterService:
-    Type: AWS::ECS::Service
-    Properties:
-      ServiceName: jmeter-service
-      TaskDefinition: !Ref JMeterTask
-      Cluster: !Ref ECSCluster
-      LaunchType: FARGATE
-      DesiredCount: 1
-      DeploymentConfiguration:
-        MaximumPercent: 200
-        MinimumHealthyPercent: 100
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-          AssignPublicIp: ENABLED
-          Subnets:
-            - !Ref PublicSubnet
-          SecurityGroups:
-            - !Ref SecurityGroup
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'JMeterService'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
+      Volumes:
+        - Volume:
+          - Name: ecs-fs
+            efsVolumeConfiguration:
+              -fileSystemId: !Ref FileSystem
+              
