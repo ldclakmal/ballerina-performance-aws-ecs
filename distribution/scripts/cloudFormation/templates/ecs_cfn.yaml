@@ -46,9 +46,6 @@ Parameters:
   TestImage:
     Type: String
     Description: URI of the test image on ECR
-  JMeterImage:
-    Type: String
-    Description: URI of the JMeter image on ECR
   SecurityGroup:
     Type: String
     Description: ID of the Security Group
