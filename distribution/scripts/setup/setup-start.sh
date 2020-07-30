@@ -71,3 +71,7 @@ $script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough
 # Create JMeter client
 chmod +x $script_directory/jmeter/jmeter-make-image.sh
 $script_directory/jmeter/jmeter-make-image.sh
+
+# Create ECS cluster
+chmod +x $script_directory/cloudFormation/ecs-cfn.sh
+$script_directory/cloudFormation/ecs-cfn.sh
