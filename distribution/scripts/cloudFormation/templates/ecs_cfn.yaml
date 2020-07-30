@@ -402,8 +402,7 @@ Resources:
         - Key: User
           Value: !Ref UserEmail
       Volumes:
-        - Volume:
-          - Name: ecs-fs
-            efsVolumeConfiguration:
-              -fileSystemId: !Ref FileSystem
+        - Name: ecs-fs
+          efsVolumeConfiguration:
+            - fileSystemId: !Ref FileSystem
               
