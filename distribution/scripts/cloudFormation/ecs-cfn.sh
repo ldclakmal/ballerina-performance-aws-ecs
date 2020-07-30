@@ -17,8 +17,67 @@
 # Create a cloudformation stack for ECS
 # ----------------------------------------------------------------------------
 
-template_body_location="file://$script_directory/cloudFormation/templates/ecs-cfn.yaml"
+template_body_location="file://$script_directory/cloudFormation/templates/ecs_cfn.yaml"
 params_location="file://$script_directory/cloudFormation/params.json"
 
-aws cloudformation create-stack --stack-name ecs-stack --template-body $template_body_location --parameters $params_location --capabilities CAPABILITY_IAM
+aws cloudformation create-stack --stack-name ecs-stack --template-body file:///home/ubuntu/ballerina-performance-aws-ecs/distribution/scripts/cloudFormation/templates/ecs_cfn.yaml --parameters \
+ParameterKey=UserEmail,ParameterValue=daksith@wso2.com \
+ParameterKey=PrivateSubnet,ParameterValue=subnet-09c7fc5a5ffe5dec3 \
+ParameterKey=PublicSubnet,ParameterValue=subnet-08b639feb926b17d1 \
+ParameterKey=NettyImage,ParameterValue=134633749276.dkr.ecr.us-east-2.amazonaws.com/netty-backend:latest \
+ParameterKey=TestImage,ParameterValue=134633749276.dkr.ecr.us-east-2.amazonaws.com/h1c_h1c_passthrough:latest \
+ParameterKey=JMeterImage,ParameterValue=134633749276.dkr.ecr.us-east-2.amazonaws.com/jmeter_client:latest \
+ParameterKey=SecurityGroup,ParameterValue=sg-039f7aaaa9d23b73f \
+ParameterKey=VPC,ParameterValue=vpc-0aa8a1b7aac565211 \
+ParameterKey=BalMemory,ParameterValue=2048 \
+ParameterKey=BalCPU,ParameterValue=1024 \
+--capabilities CAPABILITY_IAM
 
+
+--parameters ParameterKey=Parm1,ParameterValue=test1 ParameterKey=Parm2,ParameterValue=test
+[
+    {
+      "ParameterKey": "UserEmail",
+      "ParameterValue": "daksith@wso2.com"
+    }, 
+    {
+      "ParameterKey": "PrivateSubnet",
+      "ParameterValue": "subnet-09c7fc5a5ffe5dec3"
+    },
+    {
+      "ParameterKey": "PublicSubnet",
+      "ParameterValue": "subnet-08b639feb926b17d1"
+    }, 
+    {
+      "ParameterKey": "NettyImage",
+      "ParameterValue": "134633749276.dkr.ecr.us-east-2.amazonaws.com/netty-backend:latest"
+    },
+    {
+      "ParameterKey": "TestImage",
+      "ParameterValue": "134633749276.dkr.ecr.us-east-2.amazonaws.com/h1c_h1c_passthrough:latest"
+    }, 
+    {
+      "ParameterKey": "JMeterImage",
+      "ParameterValue": "134633749276.dkr.ecr.us-east-2.amazonaws.com/jmeter_client:latest"
+    },
+    {
+      "ParameterKey": "SecurityGroup",
+      "ParameterValue": "sg-039f7aaaa9d23b73f"
+    }, 
+    {
+      "ParameterKey": "VPC",
+      "ParameterValue": "vpc-0aa8a1b7aac565211"
+    },
+    {
+      "ParameterKey": "BalMemory",
+      "ParameterValue": "2048"
+    }, 
+    {
+      "ParameterKey": "BalCPU",
+      "ParameterValue": "1024"
+    },
+    {
+      "ParameterKey": "FileSystem",
+      "ParameterValue": "fs-932392eb"
+    }
+  ]
