@@ -323,13 +323,54 @@ Resources:
   ####################################################################
   # Jmeter Client
   ####################################################################
-  JMeterTask:
+  # JMeterTask:
+  #   Type: AWS::ECS::TaskDefinition
+  #   DependsOn: LoadBalancer
+  #   Properties:
+  #     Family: JMeter
+  #     Cpu: 2048
+  #     Memory: 4096
+  #     NetworkMode: awsvpc
+  #     RequiresCompatibilities:
+  #       - FARGATE
+  #     ExecutionRoleArn: !Ref ECSTaskExecutionRole
+  #     ContainerDefinitions:
+  #       - Name: JMeter-container
+  #         Image: !Ref JMeterImage
+  #         PortMappings:
+  #           - ContainerPort: 80
+  #             Protocol: tcp
+  #         Environment:
+  #           - Name: HOST_NAME 
+  #             Value: !GetAtt LoadBalancer.DNSName
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: 'perf-test'
+  #             awslogs-region: !Ref AWS::Region
+  #             awslogs-stream-prefix: 'jmeter-test'
+  #         MountPoints:
+  #           - ContainerPath: /results
+  #             SourceVolume: ecs-fs
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Join
+  #           - ':'
+  #           - - 'JMeterTask'
+  #             - !Ref AWS::StackName
+  #       - Key: User
+  #         Value: !Ref UserEmail
+  #     Volumes:
+  #       - Name: ecs-fs
+  #         efsVolumeConfiguration:
+  #           - fileSystemId: !Ref FileSystem
+    JMeterTask:
     Type: AWS::ECS::TaskDefinition
     DependsOn: LoadBalancer
     Properties:
       Family: JMeter
-      Cpu: 2048
-      Memory: 4096
+      Cpu: 512
+      Memory: 1024
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
@@ -337,8 +378,10 @@ Resources:
       ContainerDefinitions:
         - Name: JMeter-container
           Image: !Ref JMeterImage
+          Cpu: 512
+          Memory: 1024
           PortMappings:
-            - ContainerPort: 80
+            - ContainerPort: 8080
               Protocol: tcp
           Environment:
             - Name: HOST_NAME 
@@ -349,9 +392,6 @@ Resources:
               awslogs-group: 'perf-test'
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: 'jmeter-test'
-          MountPoints:
-            - ContainerPath: /results
-              SourceVolume: ecs-fs
       Tags:
         - Key: Name
           Value: !Join
@@ -360,8 +400,4 @@ Resources:
               - !Ref AWS::StackName
         - Key: User
           Value: !Ref UserEmail
-      Volumes:
-        - Name: ecs-fs
-          efsVolumeConfiguration:
-            - fileSystemId: !Ref FileSystem
               
