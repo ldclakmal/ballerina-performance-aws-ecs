@@ -53,6 +53,7 @@ $script_directory/docker/install-docker.sh
 # export PATH="/home/ubuntu/bal-directory/bin:$PATH"
 
 # Insall the AWS CLI
+apt install -y libarchive-tools
 chmod +x $script_directory/setup/install-awscli.sh
 $script_directory/setup/install-awscli.sh
 
