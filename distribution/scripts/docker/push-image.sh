@@ -86,14 +86,16 @@ else
     exit 1
 fi
 
-if ! command aws ecr describe-repositories --repository-names $image_name
-then	
-    aws ecr create-repository \
-        --repository-name $image_name \
-        --image-scanning-configuration scanOnPush=true \
-        --region $aws_region
+if command aws ecr describe-repositories --repository-names $image_name
+then
+    aws ecr delete-repository --repository-name $image_name --force
 fi
 
+aws ecr create-repository \
+    --repository-name $image_name \
+    --image-scanning-configuration scanOnPush=true \
+    --region $aws_region
+    
 if command docker push $aws_ecr_link/$image_name:$tag_name
 then
     echo "$image_name pushed to ECR succesfully"

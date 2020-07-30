@@ -37,18 +37,12 @@ Parameters:
   PrivateSubnet:
     Type: String
     Description: ID of the private subnet
-  PublicSubnet:
-    Type: String
-    Description: ID of the public subnet
   NettyImage:
     Type: String
     Description: URI of the netty image on ECR
   TestImage:
     Type: String
     Description: URI of the test image on ECR
-  JMeterImage:
-    Type: String
-    Description: URI of the JMeter image on ECR
   SecurityGroup:
     Type: String
     Description: ID of the Security Group
@@ -61,9 +55,6 @@ Parameters:
   BalCPU:
     Type: String
     Description: CPU constraint for the test
-  FileSystem:
-    Type: String
-    Description: File System ID
 
     
 ################################
@@ -320,89 +311,3 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref BalTargetGroup
-  
-  ####################################################################
-  # Jmeter Client
-  ####################################################################
-  # JMeterTask:
-  #   Type: AWS::ECS::TaskDefinition
-  #   DependsOn: LoadBalancer
-  #   Properties:
-  #     Family: JMeter
-  #     Cpu: 2048
-  #     Memory: 4096
-  #     NetworkMode: awsvpc
-  #     RequiresCompatibilities:
-  #       - FARGATE
-  #     ExecutionRoleArn: !Ref ECSTaskExecutionRole
-  #     ContainerDefinitions:
-  #       - Name: JMeter-container
-  #         Image: !Ref JMeterImage
-  #         PortMappings:
-  #           - ContainerPort: 80
-  #             Protocol: tcp
-  #         Environment:
-  #           - Name: HOST_NAME 
-  #             Value: !GetAtt LoadBalancer.DNSName
-  #         LogConfiguration:
-  #           LogDriver: awslogs
-  #           Options:
-  #             awslogs-group: 'perf-test'
-  #             awslogs-region: !Ref AWS::Region
-  #             awslogs-stream-prefix: 'jmeter-test'
-  #         MountPoints:
-  #           - ContainerPath: /results
-  #             SourceVolume: ecs-fs
-  #     Tags:
-  #       - Key: Name
-  #         Value: !Join
-  #           - ':'
-  #           - - 'JMeterTask'
-  #             - !Ref AWS::StackName
-  #       - Key: User
-  #         Value: !Ref UserEmail
-  #     Volumes:
-  #       - Name: ecs-fs
-  #         efsVolumeConfiguration:
-  #           - fileSystemId: !Ref FileSystem
-  JMeterTask:
-    Type: AWS::ECS::TaskDefinition
-    DependsOn: LoadBalancer
-    Properties:
-      Family: JMeter
-      Cpu: 512
-      Memory: 1024
-      NetworkMode: awsvpc
-      RequiresCompatibilities:
-        - FARGATE
-      ExecutionRoleArn: !Ref ECSTaskExecutionRole
-      ContainerDefinitions:
-        - Name: JMeter-container
-          Image: !Ref JMeterImage
-          Cpu: 512
-          Memory: 1024
-          PortMappings:
-            - ContainerPort: 8080
-              Protocol: tcp
-          Environment:
-            - Name: HOST_NAME 
-              Value: !GetAtt LoadBalancer.DNSName
-          LogConfiguration:
-            LogDriver: awslogs
-            Options:
-              awslogs-group: 'perf-test'
-              awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: 'jmeter-test'
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ':'
-            - - 'JMeterTask'
-              - !Ref AWS::StackName
-        - Key: User
-          Value: !Ref UserEmail
-      Volumes:
-        - Name: ecs-fs
-          efsVolumeConfiguration:
-            - fileSystemId: !Ref FileSystem
-              

@@ -17,8 +17,15 @@
 # Create a cloudformation stack for ECS
 # ----------------------------------------------------------------------------
 
-template_body_location="file://$script_directory/cloudFormation/templates/ecs-cfn.yaml"
-params_location="file://$script_directory/cloudFormation/params.json"
+template_body_location="file://$script_directory/cloudFormation/templates/ecs_cfn.yaml"
 
-aws cloudformation create-stack --stack-name ecs-stack --template-body $template_body_location --parameters $params_location --capabilities CAPABILITY_IAM
-
+aws cloudformation create-stack --stack-name ecs-stack --template-body $template_body_location --parameters \
+ParameterKey=UserEmail,ParameterValue=$user_email \
+ParameterKey=PrivateSubnet,ParameterValue=$private_subnet \
+ParameterKey=NettyImage,ParameterValue=$aws_ecr_link/netty-backend:latest \
+ParameterKey=TestImage,ParameterValue=$aws_ecr_link/h1c_h1c_passthrough:latest \
+ParameterKey=SecurityGroup,ParameterValue=$security_group \
+ParameterKey=VPC,ParameterValue=$vpc_id \
+ParameterKey=BalMemory,ParameterValue=$test_memory \
+ParameterKey=BalCPU,ParameterValue=$test_cpu \
+--capabilities CAPABILITY_IAM
