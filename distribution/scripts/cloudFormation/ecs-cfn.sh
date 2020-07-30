@@ -20,13 +20,12 @@
 template_body_location="file://$script_directory/cloudFormation/templates/ecs_cfn.yaml"
 
 aws cloudformation create-stack --stack-name ecs-stack --template-body $template_body_location --parameters \
-ParameterKey=UserEmail,ParameterValue=daksith@wso2.com \
-ParameterKey=PrivateSubnet,ParameterValue=subnet-09c7fc5a5ffe5dec3 \
-ParameterKey=PublicSubnet,ParameterValue=subnet-08b639feb926b17d1 \
-ParameterKey=NettyImage,ParameterValue=134633749276.dkr.ecr.us-east-2.amazonaws.com/netty-backend:latest \
-ParameterKey=TestImage,ParameterValue=134633749276.dkr.ecr.us-east-2.amazonaws.com/h1c_h1c_passthrough:latest \
-ParameterKey=SecurityGroup,ParameterValue=sg-039f7aaaa9d23b73f \
-ParameterKey=VPC,ParameterValue=vpc-0aa8a1b7aac565211 \
-ParameterKey=BalMemory,ParameterValue=2048 \
-ParameterKey=BalCPU,ParameterValue=1024 \
+ParameterKey=UserEmail,ParameterValue=$user_email \
+ParameterKey=PrivateSubnet,ParameterValue=$private_subnet \
+ParameterKey=NettyImage,ParameterValue=$aws_ecr_link/netty-backend:latest \
+ParameterKey=TestImage,ParameterValue=$aws_ecr_link/h1c_h1c_passthrough:latest \
+ParameterKey=SecurityGroup,ParameterValue=$security_group \
+ParameterKey=VPC,ParameterValue=$vpc_id \
+ParameterKey=BalMemory,ParameterValue=$test_memory \
+ParameterKey=BalCPU,ParameterValue=$test_cpu \
 --capabilities CAPABILITY_IAM
