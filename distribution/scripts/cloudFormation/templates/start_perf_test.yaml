@@ -151,14 +151,6 @@ Resources:
               Action:
                 # Full access to ECR 
                 - 'ecr:*'
-                # Read Access to cloudtrail
-                - 'cloudtrail:LookupEvents'
-                # ECS Tasks to download images from ECR
-                - 'cloudformation:*'
-                # IAM role creation
-                - 'iam:*'
-                # ECS Tasks to download images from ECR
-                - 'elasticloadbalancing:*'
               Resource: '*'
         - PolicyName: AWSCloudFormationFullAccess 
           PolicyDocument:
@@ -167,6 +159,30 @@ Resources:
               Action:
                 # ECS Tasks to download images from ECR
                 - 'cloudformation:*'
+              Resource: '*'
+        - PolicyName: IAMFullAccess 
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+                # To create IAM role
+                - 'iam:*'
+              Resource: '*'
+        - PolicyName: ElasticLoadBalancingFullAccess 
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+                # To create elastic load balancer
+                - 'elasticloadbalancing:*'
+              Resource: '*'
+        - PolicyName: AmazonECS_FullAccess 
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+                # To create elastic load balancer
+                - 'ecs:*'
               Resource: '*'
   EC2InstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
