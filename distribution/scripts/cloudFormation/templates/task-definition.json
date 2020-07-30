@@ -5,7 +5,7 @@
     "containerDefinitions": [
         {
             "name": "JMeter-container",
-            "image": "xxx",
+            "image": "134633749276.dkr.ecr.us-east-2.amazonaws.com/jmeter_client:latest",
             "portMappings": [
                 {
                     "containerPort": 8080,
