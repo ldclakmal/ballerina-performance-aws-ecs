@@ -18,4 +18,4 @@
 # ----------------------------------------------------------------------------
 
 cd $script_directory/cloudFormation/
-aws cloudformation create-stack --stack-name ecs-stack --template-body file://$PWD/templates/ecs_cfn.yaml --parameters file://$PWD/params.json
+aws cloudformation create-stack --stack-name ecs-stack --template-body file:///home/ubuntu/ballerina-performance-aws-ecs/distribution/scripts/cloudFormation/Templates/ecs_cfn.yaml --parameters file:///home/ubuntu/ballerina-performance-aws-ecs/distribution/scripts/cloudFormation/params.json

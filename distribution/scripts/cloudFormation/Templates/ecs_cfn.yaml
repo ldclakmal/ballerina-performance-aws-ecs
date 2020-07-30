@@ -320,6 +320,7 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref BalTargetGroup
+  
   ####################################################################
   # Jmeter Client
   ####################################################################
@@ -364,7 +365,7 @@ Resources:
   #       - Name: ecs-fs
   #         efsVolumeConfiguration:
   #           - fileSystemId: !Ref FileSystem
-    JMeterTask:
+  JMeterTask:
     Type: AWS::ECS::TaskDefinition
     DependsOn: LoadBalancer
     Properties:
