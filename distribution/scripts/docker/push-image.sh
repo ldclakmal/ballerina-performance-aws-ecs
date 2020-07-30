@@ -86,7 +86,7 @@ else
     exit 1
 fi
 
-if ! command aws ecr describe-repositories --repository-names $image_name
+if command aws ecr describe-repositories --repository-names $image_name
 then
     aws ecr delete-repository --repository-name $image_name --force
 fi
