@@ -42,35 +42,35 @@ export bal_directory=="/home/ubuntu/bal-directory/bin"
 chmod +x $script_directory/docker/install-docker.sh
 $script_directory/docker/install-docker.sh
 
-# Install Java
-chmod +x $script_directory/java/install-java.sh
-$script_directory/java/install-java.sh
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre
+# # Install Java
+# chmod +x $script_directory/java/install-java.sh
+# $script_directory/java/install-java.sh
+# export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre
 
-# Install Ballerina
-chmod +x $script_directory/ballerina/install-ballerina.sh
-$script_directory/ballerina/install-ballerina.sh
-export PATH="/home/ubuntu/bal-directory/bin:$PATH"
+# # Install Ballerina
+# chmod +x $script_directory/ballerina/install-ballerina.sh
+# $script_directory/ballerina/install-ballerina.sh
+# export PATH="/home/ubuntu/bal-directory/bin:$PATH"
 
 # Insall the AWS CLI
 chmod +x $script_directory/setup/install-awscli.sh
 $script_directory/setup/install-awscli.sh
 
-# Install maven and build project
-chmod +x $script_directory/setup/build-components.sh
-$script_directory/setup/build-components.sh
+# # Install maven and build project
+# chmod +x $script_directory/setup/build-components.sh
+# $script_directory/setup/build-components.sh
 
-# Create netty backend image and push to ECR
-chmod +x $script_directory/netty/netty-make-image.sh
-$script_directory/netty/netty-make-image.sh
+# # Create netty backend image and push to ECR
+# chmod +x $script_directory/netty/netty-make-image.sh
+# $script_directory/netty/netty-make-image.sh
 
-# Create h1c_h1c_passthrough test
-chmod +x $script_directory/ballerina/bal-make-image.sh
-$script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough
+# # Create h1c_h1c_passthrough test
+# chmod +x $script_directory/ballerina/bal-make-image.sh
+# $script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough
 
-# Create JMeter client
-chmod +x $script_directory/jmeter/jmeter-make-image.sh
-$script_directory/jmeter/jmeter-make-image.sh
+# # Create JMeter client
+# chmod +x $script_directory/jmeter/jmeter-make-image.sh
+# $script_directory/jmeter/jmeter-make-image.sh
 
 # Create ECS cluster
 chmod +x $script_directory/cloudFormation/ecs-cfn.sh
