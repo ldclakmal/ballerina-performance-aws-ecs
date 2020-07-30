@@ -401,4 +401,8 @@ Resources:
               - !Ref AWS::StackName
         - Key: User
           Value: !Ref UserEmail
+      Volumes:
+        - Name: ecs-fs
+          efsVolumeConfiguration:
+            - fileSystemId: !Ref FileSystem
               

@@ -17,5 +17,8 @@
 # Create a cloudformation stack for ECS
 # ----------------------------------------------------------------------------
 
-cd $script_directory/cloudFormation/
-aws cloudformation create-stack --stack-name ecs-stack --template-body file:///home/ubuntu/ballerina-performance-aws-ecs/distribution/scripts/cloudFormation/Templates/ecs_cfn.yaml --parameters file:///home/ubuntu/ballerina-performance-aws-ecs/distribution/scripts/cloudFormation/params.json
+template_body_location="file://$script_directory/cloudFormation/templates/ecs-cfn.yaml"
+params_location="file://$script_directory/cloudFormation/params.json"
+
+aws cloudformation create-stack --stack-name ecs-stack --template-body $template_body_location --parameters $params_location --capabilities CAPABILITY_IAM
+
