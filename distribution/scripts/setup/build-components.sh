@@ -34,8 +34,8 @@ fi
 mvn -f $repo_directory package
 STATUS=$?
 if [ $STATUS -eq 0 ]; then
-   echo "Maven build Successful"
+   echo "Maven build successful."
 else
-   echo "Maven Build Failed"
+   echo "Maven build failed."
    exit 1
 fi

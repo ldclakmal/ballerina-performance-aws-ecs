@@ -35,7 +35,7 @@ fi
 user="$default_user"
 
 if ! command -v docker >/dev/null 2>&1; then
-    echo "docker is not installed! Installing docker.."
+    echo "Docker is not installed. Installing docker."
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
     apt-get update
@@ -43,6 +43,6 @@ if ! command -v docker >/dev/null 2>&1; then
     #set docker user as a non root user
     sudo usermod -aG docker $user
 else
-    echo "docker is already installed."
+    echo "Docker is already installed."
 fi
 

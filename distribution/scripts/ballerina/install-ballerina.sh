@@ -26,8 +26,6 @@ fi
 
 wget -O /home/ubuntu/ballerina-zip.zip $bal_download_link
 
-apt install -y libarchive-tools
-
 mkdir /home/ubuntu/bal-directory
 
 bsdtar --strip-components=1 -C /home/ubuntu/bal-directory -xvf /home/ubuntu/ballerina-zip.zip

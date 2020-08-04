@@ -103,10 +103,3 @@ else
     echo "Could not push $image_name to ECR"
     exit
 fi
-
-
-
-
-
-
-
