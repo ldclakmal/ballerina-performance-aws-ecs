@@ -31,7 +31,7 @@ Description: >-
 Parameters:
   UserEmail:
     Type: String
-    Description: Email address of the user creating this stack
+    Description: Email address of the user creating the stack
     AllowedPattern: '[^\s@]+@[^\s@]+\.[^\s@]+'
     ConstraintDescription: You should enter a valid email
   PrivateSubnet:
@@ -49,10 +49,10 @@ Parameters:
   VPC:
     Type: String
     Description: ID of the VPC
-  BalMemory:
+  BallerinaMemory:
     Type: String
-    Description: Memory Constrain for the test
-  BalCPU:
+    Description: Memory constraint for the test
+  BallerinaCPU:
     Type: String
     Description: CPU constraint for the test
 
@@ -222,8 +222,8 @@ Resources:
     DependsOn: LoadBalancer
     Properties:
       Family: bal
-      Cpu: !Ref BalCPU
-      Memory: !Ref BalMemory
+      Cpu: !Ref BallerinaCPU
+      Memory: !Ref BallerinaMemory
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE

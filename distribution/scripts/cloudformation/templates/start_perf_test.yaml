@@ -37,36 +37,36 @@ Description: >-
 Parameters:
   UserEmail:
     Type: String
-    Description: Email address of the user creating this stack
+    Description: Email address of the user creating this stack.
     AllowedPattern: '[^\s@]+@[^\s@]+\.[^\s@]+'
-    ConstraintDescription: You should enter a valid email
+    ConstraintDescription: You should enter a valid email.
   KeyName:
-    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
     Type: 'AWS::EC2::KeyPair::KeyName'
-    ConstraintDescription: must be the name of an existing EC2 KeyPair.
-  GitURL:
-    Description: URL for the github repo of the ballerina performance tests
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance.
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair.
+  GitHubRepoURL:
     Type: String
-    ConstraintDescription: must be the URL of the github repository.
-  BalURL:
-    Description: URL for the Ballerina zip file
+    Description: URL for the github repo of the ballerina performance tests.
+    ConstraintDescription: Must be the URL of the github repository.
+  BallerinaZipURL:
     Type: String
-    ConstraintDescription: must be the URL of the ballerina zip file.
+    Description: URL for the Ballerina zip file.
+    ConstraintDescription: Must be the URL of the ballerina zip file.
   JMeterOptions:
-    Description: Options for JMeter
     Type: String
+    Description: Options for JMeter.
     ConstraintDescription: A string of options for JMeter.
-  BalMemory:
+  BallerinaMemory:
     Type: String
     Description: Memory Constraint for the test.
     Default: "2048"
-  BalCPU:
+  BallerinaCPU:
     Type: String
     Description: CPU Constraint for the test.
     Default: "1024"
   InstanceType:
-    Description: WebServer EC2 instance type
     Type: String
+    Description: WebServer EC2 instance type.
     Default: t2.micro
     AllowedValues:
       - t1.micro
@@ -123,7 +123,7 @@ Parameters:
       - cr1.8xlarge
       - cc2.8xlarge
       - cg1.4xlarge
-    ConstraintDescription: must be a valid EC2 instance type.
+    ConstraintDescription: Must be a valid EC2 instance type.
 ################################
 # Create AWS resources
 ################################
@@ -360,10 +360,10 @@ Resources:
       SubnetId: !Ref PublicSubnet
       SecurityGroups: 
         - !Ref SecurityGroup
+
   ##########################################################################################
   # Create EC2 instance to start performance test
   ##########################################################################################
-
   EC2Instance:
     Type: 'AWS::EC2::Instance'
     DependsOn: MountTarget
@@ -392,13 +392,13 @@ Resources:
           #!/bin/bash -xe
           export repo_directory="/home/ubuntu/ballerina-performance-aws-ecs"
           export script_directory="$repo_directory/distribution/scripts"
-          export bal_download_link="${BalURL}"
-          export JMeter_options="${JMeterOptions}"
+          export bal_download_link="${BallerinaZipURL}"
+          export jmeter_options="${JMeterOptions}"
           export file_system="${FileSystem}"
           export aws_region="${AWS::Region}"
           export file_system_directory="/mnt/efs/"
-          export test_memory="${BalMemory}"
-          export test_cpu="${BalCPU}"
+          export ballerina_memory="${BallerinaMemory}"
+          export ballerina_cpu="${BallerinaCPU}"
           export user_email="${UserEmail}"
           export private_subnet="${PrivateSubnet}"
           export security_group="${SecurityGroup}"
@@ -408,13 +408,13 @@ Resources:
           mkdir $file_system_directory
           mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 $file_system.efs.$aws_region.amazonaws.com:/ $file_system_directory
           # Start by cloning the performance test repository
-          git clone ${GitURL} $repo_directory
+          git clone ${GitHubRepoURL} $repo_directory
           if [ ! -d $repo_directory ]; then
             echo "Could not pull the ecs performance test repository."
             exit 1
           fi
           if [ ! -d $script_directory ]; then
-            echo "Script directory not available"
+            echo "Script directory not available."
             exit 1
           fi
           chmod +x $script_directory/setup/setup-start.sh

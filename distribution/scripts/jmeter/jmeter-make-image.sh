@@ -16,15 +16,15 @@
 # ----------------------------------------------------------------------------
 # Create jmeter docker image
 # ----------------------------------------------------------------------------
-JMeter_directory="$script_directory/jmeter"
+jmeter_directory="$script_directory/jmeter"
 jtl_directory="$repo_directory/components/jtl-splitter/target"
 payload_gen_directory="$repo_directory/components/payload-generator/target"
 
 # Download JMeter and extract
-wget -O apache-jmeter.tgz $JMeter_download_link
-bsdtar -C $JMeter_directory -xvf apache-jmeter.tgz
+wget -O apache-jmeter.tgz $jmeter_download_link
+bsdtar -C $jmeter_directory -xvf apache-jmeter.tgz
 
-cd $JMeter_directory
+cd $jmeter_directory
 
 # Copy all required files
 cp $jtl_directory/jtl-splitter-$version.jar .
@@ -49,10 +49,10 @@ echo "ENV HOST_NAME \"\"" >> Dockerfile
 
 echo "COPY . ." >> Dockerfile
 
-echo "CMD ./run-tests.sh $JMeter_options -a \$HOST_NAME -v $version" >> Dockerfile
+echo "CMD ./run-tests.sh $jmeter_options -a \$HOST_NAME -v $version" >> Dockerfile
 
 cd $home_directory
 
 # Push image to ECR
 chmod +x $script_directory/docker/push-image.sh
-$script_directory/docker/push-image.sh -d $JMeter_directory -i jmeter_client
+$script_directory/docker/push-image.sh -d $jmeter_directory -i jmeter_client

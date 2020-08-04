@@ -27,8 +27,11 @@ fi
 # Component versions (maven)
 export version="0.1.0-SNAPSHOT"
 
-# Download Links
-export JMeter_download_link="https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.3.tgz"
+# Install tools
+apt install -y libarchive-tools
+
+# Download links
+export jmeter_download_link="https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.3.tgz"
 export aws_cli_download_link="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
 
 # AWS components
@@ -36,9 +39,9 @@ export aws_ecr_link="134633749276.dkr.ecr.us-east-2.amazonaws.com"
 
 # Directories
 export home_directory="/home/ubuntu"
-export bal_directory=="/home/ubuntu/bal-directory/bin"
+export bal_directory="/home/ubuntu/bal-directory/bin"
 
-# Install docker
+# Install Docker
 chmod +x $script_directory/docker/install-docker.sh
 $script_directory/docker/install-docker.sh
 
@@ -52,26 +55,26 @@ chmod +x $script_directory/ballerina/install-ballerina.sh
 $script_directory/ballerina/install-ballerina.sh
 export PATH="/home/ubuntu/bal-directory/bin:$PATH"
 
-# Insall the AWS CLI
+# Install the AWS CLI
 chmod +x $script_directory/setup/install-awscli.sh
 $script_directory/setup/install-awscli.sh
 
-# Install maven and build project
+# Install Maven and build project
 chmod +x $script_directory/setup/build-components.sh
 $script_directory/setup/build-components.sh
 
-# Create netty backend image and push to ECR
+# Create Netty backend image and push to ECR
 chmod +x $script_directory/netty/netty-make-image.sh
 $script_directory/netty/netty-make-image.sh
 
-# Create h1c_h1c_passthrough test
+# Create Ballerina test and push to ECR
 chmod +x $script_directory/ballerina/bal-make-image.sh
 $script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough
 
-# Create JMeter client
+# Create JMeter client and push to ECR
 chmod +x $script_directory/jmeter/jmeter-make-image.sh
 $script_directory/jmeter/jmeter-make-image.sh
 
 # Create ECS cluster
-chmod +x $script_directory/cloudFormation/ecs-cfn.sh
-$script_directory/cloudFormation/ecs-cfn.sh
+chmod +x $script_directory/cloudformation/ecs-cfn.sh
+$script_directory/cloudformation/ecs-cfn.sh

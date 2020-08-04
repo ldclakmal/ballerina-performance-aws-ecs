@@ -23,7 +23,7 @@ test_name=""
 function usage() {
     echo ""
     echo "Usage: "
-    echo "$0 [-n <Adress of netty host>] [-t <Name of the test>] [-h]"
+    echo "$0 [-n <Address of netty host>] [-t <Name of the test>] [-h]"
     echo ""
     echo "-n: Address of the netty backend"
     echo "-t: Name of the test"

@@ -46,9 +46,8 @@ done
 if [[ -z $test_name ]]; then
     echo "Please provide the name of the test $test_name to start building image."
 else
-    echo "Starting to build $test_name"
+    echo "Starting to build $test_name."
 fi
-
 
 test_directory="$bal_script_directory/tests/$test_name"
 
@@ -79,9 +78,3 @@ cd $home_directory
 # Push image to ECR
 chmod +x $script_directory/docker/push-image.sh
 $script_directory/docker/push-image.sh -d $test_directory -i $test_name
-
-
-
-
-
-
