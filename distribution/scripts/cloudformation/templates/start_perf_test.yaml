@@ -49,6 +49,10 @@ Parameters:
     Description: URL for the github repo of the ballerina performance tests.
     ConstraintDescription: Must be the URL of the github repository.
     Default: "https://github.com/ldclakmal/ballerina-performance-aws-ecs"
+  GitHubRepoBranch:
+    Type: String
+    Description: Branch of the github repo of the ballerina performance tests.
+    Default: "dev"
   BallerinaZipURL:
     Type: String
     Description: URL for the Ballerina Zip file.
@@ -411,7 +415,7 @@ Resources:
           mkdir $file_system_directory
           mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 $file_system.efs.$aws_region.amazonaws.com:/ $file_system_directory
           # Start by cloning the performance test repository
-          git clone ${GitHubRepoURL} $repo_directory
+          git clone -b ${GitHubRepoBranch} ${GitHubRepoURL} $repo_directory
           if [ ! -d $repo_directory ]; then
             echo "Could not pull the ecs performance test repository."
             exit 1
