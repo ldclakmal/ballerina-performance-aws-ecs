@@ -12,35 +12,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 # ----------------------------------------------------------------------------
-# Create netty backend docker image
+# Create Netty backend Docker image and push to ECR.
 # ----------------------------------------------------------------------------
-jar_directory="$repo_directory/components/netty-http-echo-service/target"
-netty_directory="$script_directory/netty"
+
 netty_service_name="netty-http-echo-service"
-netty_image_name="netty-backend"
+netty_image_name="netty-echo-backend"
 
-cd $netty_directory
-
+cd $SCRIPTS_DIR/netty
 touch Dockerfile
 
 echo "FROM alpine:3.12.0" >> Dockerfile
-
 echo "USER root" >> Dockerfile
-
-echo "RUN apk add openjdk8=8.242.08-r2" >> Dockerfile
-
-cp $jar_directory/$netty_service_name-$version.jar .
-
-echo "COPY $netty_service_name-$version.jar ." >> Dockerfile
-
+echo "RUN apk add openjdk8=8.252.09-r0" >> Dockerfile
+cp $GITHUB_REPO_DIR/components/netty-http-echo-service/target/$netty_service_name-$COMPONENTS_VERSION.jar .
+echo "COPY $netty_service_name-$COMPONENTS_VERSION.jar ." >> Dockerfile
 echo "COPY start-netty.sh ." >> Dockerfile
+echo "ENTRYPOINT ./start-netty.sh -j $netty_service_name-$COMPONENTS_VERSION.jar" >> Dockerfile
 
-echo "ENTRYPOINT ./start-netty.sh -j $netty_service_name-$version.jar" >> Dockerfile
-
-cd $home_directory
+cd $HOME_DIR
 
 # Push image to ECR
-chmod +x $script_directory/docker/push-image.sh
-$script_directory/docker/push-image.sh -d $netty_directory -i $netty_image_name
+$SCRIPTS_DIR/docker/push-docker-image.sh -d $SCRIPTS_DIR/netty -i $netty_image_name

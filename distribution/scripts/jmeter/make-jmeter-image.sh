@@ -12,47 +12,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# ----------------------------------------------------------------------------
-# Create jmeter docker image
-# ----------------------------------------------------------------------------
-jmeter_directory="$script_directory/jmeter"
-jtl_directory="$repo_directory/components/jtl-splitter/target"
-payload_gen_directory="$repo_directory/components/payload-generator/target"
 
-# Download JMeter and extract
-wget -O apache-jmeter.tgz $jmeter_download_link
-bsdtar -C $jmeter_directory -xvf apache-jmeter.tgz
+# ----------------------------------------------------------------------------
+# Create JMeter Docker image and push to ECR.
+# ----------------------------------------------------------------------------
 
-cd $jmeter_directory
+cd $JMETER_DIR
 
 # Copy all required files
-cp $jtl_directory/jtl-splitter-$version.jar .
-cp $payload_gen_directory/payload-generator-$version.jar .
-cp $script_directory/ballerina/test-config.sh .
+cp $GITHUB_REPO_DIR/components/jtl-splitter/target/jtl-splitter-$COMPONENTS_VERSION.jar .
+cp $GITHUB_REPO_DIR/components/payload-generator/target/payload-generator-$COMPONENTS_VERSION.jar .
+cp $SCRIPTS_DIR/ballerina/ballerina-test-config.sh .
+cp $SCRIPTS_DIR/jmeter/start-jmeter-test.sh .
+cp $SCRIPTS_DIR/jmeter/jtl-splitter.sh .
+cp $SCRIPTS_DIR/jmeter/generate-payload.sh .
+cp $SCRIPTS_DIR/jmeter/http-post-request.jmx .
+cp $SCRIPTS_DIR/jmeter/jmeter-test-util.sh .
 
 touch Dockerfile
 
 echo "FROM alpine:3.12.0" >> Dockerfile
-
 echo "USER root" >> Dockerfile
-
-echo "RUN apk add openjdk8=8.242.08-r2 && \\" >> Dockerfile
-
+echo "RUN apk add openjdk8=8.252.09-r0 && \\" >> Dockerfile
 echo "apk add bash && \\" >> Dockerfile
-
 echo "apk add jq && \\" >> Dockerfile
-
 echo "apk add zip" >> Dockerfile
-
 echo "ENV HOST_NAME \"\"" >> Dockerfile
-
 echo "COPY . ." >> Dockerfile
+echo "CMD ./start-jmeter-test.sh $JMETER_OPTIONS -a \$HOST_NAME -v $COMPONENTS_VERSION" >> Dockerfile
 
-echo "CMD ./run-tests.sh $jmeter_options -a \$HOST_NAME -v $version" >> Dockerfile
-
-cd $home_directory
+cd $HOME_DIR
 
 # Push image to ECR
-chmod +x $script_directory/docker/push-image.sh
-$script_directory/docker/push-image.sh -d $jmeter_directory -i jmeter_client
+$SCRIPTS_DIR/docker/push-docker-image.sh -d $JMETER_DIR -i jmeter-client

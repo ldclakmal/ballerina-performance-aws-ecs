@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 # ----------------------------------------------------------------------------
 # Generate JSON Payloads
 # ----------------------------------------------------------------------------
@@ -60,5 +60,5 @@ fi
 
 for s in ${payloads[*]}; do
     echo "Generating ${s}B file"
-    java -jar ./payload-generator-$version.jar --size $s --payload-type ${payload_type}
+    java -jar ./payload-generator-$COMPONENTS_VERSION.jar --size $s --payload-type ${payload_type}
 done

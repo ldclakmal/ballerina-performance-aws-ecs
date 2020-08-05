@@ -14,9 +14,9 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
+
 # ----------------------------------------------------------------------------
-# Script to run JMeter inside the docker image
+# Script to run JMeter test inside the Docker image.
 # ----------------------------------------------------------------------------
 
 # Application heap Sizes
@@ -180,7 +180,7 @@ if [[ -z $hostname ]]; then
     exit 1
 fi
 
-if [[ -z $version ]]; then
+if [[ -z $COMPONENTS_VERSION ]]; then
     echo "Please provide the version for the performance test."
     exit 1
 fi
@@ -228,10 +228,10 @@ fi
 
 
 # Get the test configuration
-source ./test-config.sh
+source ./ballerina-test-config.sh
 
 # Get the test utils
-source ./test-utils.sh
+source ./jmeter-test-util.sh
 
 
 function initialize_test() {
@@ -317,8 +317,8 @@ function initialize_test() {
         done
 
         # Payloads should be created in the $HOME directory
-        chmod +x ./generate-payloads.sh
-        if ! ./generate-payloads.sh -p $payload_type ${payload_sizes[@]}; then
+        chmod +x ./generate-payload.sh
+        if ! ./generate-payload.sh -p $payload_type ${payload_sizes[@]}; then
             echo "WARNING: Failed to generate payloads!"
         fi
     fi

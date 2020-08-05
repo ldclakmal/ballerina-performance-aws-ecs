@@ -23,7 +23,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.performance.ecs</groupId>
-    <artifactId>performance-ecs</artifactId>
+    <artifactId>ballerina-performance-aws-ecs</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Artifacts for Ballerina Performance Tests</name>

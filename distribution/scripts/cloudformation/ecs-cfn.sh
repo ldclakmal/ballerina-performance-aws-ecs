@@ -12,20 +12,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 # ----------------------------------------------------------------------------
-# Create a cloudformation stack for ECS
+# Create a Cloudformation stack for ECS.
 # ----------------------------------------------------------------------------
 
-template_body_location="file://$script_directory/cloudformation/templates/ecs_cfn.yaml"
+template_body_location="file://$SCRIPTS_DIR/cloudformation/templates/ecs.yaml"
 
 aws cloudformation create-stack --stack-name ecs-stack --template-body $template_body_location --parameters \
-ParameterKey=UserEmail,ParameterValue=$user_email \
-ParameterKey=PrivateSubnet,ParameterValue=$private_subnet \
-ParameterKey=NettyImage,ParameterValue=$aws_ecr_link/netty-backend:latest \
-ParameterKey=TestImage,ParameterValue=$aws_ecr_link/h1c_h1c_passthrough:latest \
-ParameterKey=SecurityGroup,ParameterValue=$security_group \
-ParameterKey=VPC,ParameterValue=$vpc_id \
-ParameterKey=BallerinaMemory,ParameterValue=$ballerina_memory \
-ParameterKey=BallerinaCPU,ParameterValue=$ballerina_cpu \
+ParameterKey=UserEmail,ParameterValue=$USER_EMAIL \
+ParameterKey=PrivateSubnet,ParameterValue=$PRIVATE_SUBNET \
+ParameterKey=NettyImage,ParameterValue=$AWS_ECR_URL/netty-echo-backend:latest \
+ParameterKey=TestImage,ParameterValue=$AWS_ECR_URL/h1c_h1c_passthrough:latest \
+ParameterKey=SecurityGroup,ParameterValue=$SECURITY_GROUP \
+ParameterKey=VPC,ParameterValue=$VPC \
+ParameterKey=BallerinaMemory,ParameterValue=$BALLERINA_MEMORY \
+ParameterKey=BallerinaCPU,ParameterValue=$BALLERINA_CPU \
 --capabilities CAPABILITY_IAM
