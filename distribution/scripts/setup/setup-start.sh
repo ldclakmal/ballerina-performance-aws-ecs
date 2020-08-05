@@ -12,9 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 # ----------------------------------------------------------------------------
-# Setting up the EC2 Linux machine
+# Setting up the Linux EC2 instance.
 # ----------------------------------------------------------------------------
 
 # Make sure the script is running as root.
@@ -24,57 +24,28 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
-# Component versions (maven)
-export version="0.1.0-SNAPSHOT"
-
-# Install tools
-apt install -y libarchive-tools
-
-# Download links
-export jmeter_download_link="https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.3.tgz"
-export aws_cli_download_link="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
-
-# AWS components
-export aws_ecr_link="134633749276.dkr.ecr.us-east-2.amazonaws.com"
+# Components version (Maven)
+export COMPONENTS_VERSION="0.1.0-SNAPSHOT"
 
 # Directories
-export home_directory="/home/ubuntu"
-export bal_directory="/home/ubuntu/bal-directory/bin"
+export HOME_DIR="/home/ubuntu"
+export BALLERINA_DIR="/home/ubuntu/ballerina"
+export JMETER_DIR="/home/ubuntu/jmeter"
 
-# Install Docker
-chmod +x $script_directory/docker/install-docker.sh
-$script_directory/docker/install-docker.sh
+# Install required tools and packages
+source $SCRIPTS_DIR/setup/install-tools.sh
+source $SCRIPTS_DIR/docker/install-docker.sh
+source $SCRIPTS_DIR/java/install-java.sh
+source $SCRIPTS_DIR/ballerina/install-ballerina.sh
+source $SCRIPTS_DIR/jmeter/install-jmeter.sh
 
-# Install Java
-chmod +x $script_directory/java/install-java.sh
-$script_directory/java/install-java.sh
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre
+# Build components package
+$SCRIPTS_DIR/setup/build-components.sh
 
-# Install Ballerina
-chmod +x $script_directory/ballerina/install-ballerina.sh
-$script_directory/ballerina/install-ballerina.sh
-export PATH="/home/ubuntu/bal-directory/bin:$PATH"
-
-# Install the AWS CLI
-chmod +x $script_directory/setup/install-awscli.sh
-$script_directory/setup/install-awscli.sh
-
-# Install Maven and build project
-chmod +x $script_directory/setup/build-components.sh
-$script_directory/setup/build-components.sh
-
-# Create Netty backend image and push to ECR
-chmod +x $script_directory/netty/netty-make-image.sh
-$script_directory/netty/netty-make-image.sh
-
-# Create Ballerina test and push to ECR
-chmod +x $script_directory/ballerina/bal-make-image.sh
-$script_directory/ballerina/bal-make-image.sh -t h1c_h1c_passthrough
-
-# Create JMeter client and push to ECR
-chmod +x $script_directory/jmeter/jmeter-make-image.sh
-$script_directory/jmeter/jmeter-make-image.sh
+# Create Docker images and push to ECR
+$SCRIPTS_DIR/netty/make-netty-image.sh
+$SCRIPTS_DIR/ballerina/make-ballerina-image.sh -t "h1c-h1c-passthrough"
+$SCRIPTS_DIR/jmeter/make-jmeter-image.sh
 
 # Create ECS cluster
-chmod +x $script_directory/cloudformation/ecs-cfn.sh
-$script_directory/cloudformation/ecs-cfn.sh
+source $SCRIPTS_DIR/cloudformation/ecs-cfn.sh

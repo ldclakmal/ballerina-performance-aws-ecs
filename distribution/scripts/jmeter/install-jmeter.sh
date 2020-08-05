@@ -16,7 +16,7 @@
 # under the License.
 
 # ----------------------------------------------------------------------------
-# Installation script for setting up docker on Linux.
+# Installation script for setting up JMeter on Linux.
 # ----------------------------------------------------------------------------
 
 # Make sure the script is running as root.
@@ -26,21 +26,11 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
-default_user="ubuntu"
-if [[ ! -z $SUDO_USER ]]; then
-    default_user="$SUDO_USER"
-fi
-
-if ! command -v docker >/dev/null 2>&1; then
-    echo "Installing Docker..."
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
-    apt-get update
-    apt-get -y -q install docker-ce
-    #set docker user as a non root user
-    sudo usermod -aG docker $default_user
-    echo "Docker version:"
-    docker -v
-else
-    echo "Docker is already installed."
-fi
+echo "Installing JMeter..."
+jmeter_url="https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.3.tgz"
+mkdir $JMETER_DIR
+wget -O apache-jmeter.tgz $jmeter_url
+bsdtar -C $JMETER_DIR -xvf apache-jmeter.tgz
+export PATH="$JMETER_DIR/apache-jmeter-5.3/bin:$PATH"
+echo "JMeter version:"
+JVM_ARGS="-Xms512m -Xmx512m" jmeter -v

@@ -25,12 +25,6 @@ Description: >-
   All other EC2 instances will be in a private subnet.
   **WARNING** This template creates multiple Amazon AWS resources. You will be
   billed for the AWS resources used if you create a stack from this template.
-
-#########################
-# Params to edit
-########################
-# Instance type in EC2 Instance
-
 #############################
 # User inputs
 #############################
@@ -40,6 +34,7 @@ Parameters:
     Description: Email address of the user creating this stack.
     AllowedPattern: '[^\s@]+@[^\s@]+\.[^\s@]+'
     ConstraintDescription: You should enter a valid email.
+    Default: "user@example.com"
   KeyName:
     Type: 'AWS::EC2::KeyPair::KeyName'
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instance.
@@ -48,7 +43,7 @@ Parameters:
     Type: String
     Description: URL for the github repo of the ballerina performance tests.
     ConstraintDescription: Must be the URL of the github repository.
-    Default: "https://github.com/ldclakmal/ballerina-performance-aws-ecs"
+    Default: "https://github.com/ldclakmal/ballerina-performance-aws-ecs.git"
   GitHubRepoBranch:
     Type: String
     Description: Branch of the github repo of the ballerina performance tests.
@@ -375,7 +370,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     DependsOn: MountTarget
     Properties:
-      ImageId: ami-0a63f96e85105c6d3
+      ImageId: ami-0bbe28eb2173f6167
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
       IamInstanceProfile: !Ref EC2InstanceProfile
@@ -397,32 +392,34 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash -xe
-          export repo_directory="/home/ubuntu/ballerina-performance-aws-ecs"
-          export script_directory="$repo_directory/distribution/scripts"
-          export bal_download_link="${BallerinaZipURL}"
-          export jmeter_options="${JMeterOptions}"
-          export file_system="${FileSystem}"
-          export aws_region="${AWS::Region}"
-          export file_system_directory="/mnt/efs/"
-          export ballerina_memory="${BallerinaMemory}"
-          export ballerina_cpu="${BallerinaCPU}"
-          export user_email="${UserEmail}"
-          export private_subnet="${PrivateSubnet}"
-          export security_group="${SecurityGroup}"
-          export vpc_id="${VPC}"
+          export GITHUB_REPO_DIR="/home/ubuntu/ballerina-performance-aws-ecs"
+          export SCRIPTS_DIR="$GITHUB_REPO_DIR/distribution/scripts"
+          export BALLERINA_ZIP_URL="${BallerinaZipURL}"
+          export JMETER_OPTIONS="${JMeterOptions}"
+          export FILE_SYSTEM="${FileSystem}"
+          export FILE_SYSTEM_DIR="/mnt/efs/"
+          export BALLERINA_MEMORY="${BallerinaMemory}"
+          export BALLERINA_CPU="${BallerinaCPU}"
+          export USER_EMAIL="${UserEmail}"
+          export PRIVATE_SUBNET="${PrivateSubnet}"
+          export SECURITY_GROUP="${SecurityGroup}"
+          export VPC="${VPC}"
+          export AWS_ACCOUNT_ID="${AWS::AccountId}"
+          export AWS_REGION="${AWS::Region}"
+          export AWS_ECR_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
           apt-get update
           apt-get install -y curl nfs-common
-          mkdir $file_system_directory
-          mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 $file_system.efs.$aws_region.amazonaws.com:/ $file_system_directory
-          # Start by cloning the performance test repository
-          git clone -b ${GitHubRepoBranch} ${GitHubRepoURL} $repo_directory
-          if [ ! -d $repo_directory ]; then
-            echo "Could not pull the ecs performance test repository."
+          mkdir $FILE_SYSTEM_DIR
+          mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 $FILE_SYSTEM.efs.$AWS_REGION.amazonaws.com:/ $FILE_SYSTEM_DIR
+          # Start by cloning the GitHub repository.
+          git clone -b ${GitHubRepoBranch} ${GitHubRepoURL} $GITHUB_REPO_DIR
+          if [ ! -d $GITHUB_REPO_DIR ]; then
+            echo "Could not pull the ECS performance test repository."
             exit 1
           fi
-          if [ ! -d $script_directory ]; then
-            echo "Script directory not available."
+          if [ ! -d $SCRIPTS_DIR ]; then
+            echo "Scripts directory is not available."
             exit 1
           fi
-          chmod +x $script_directory/setup/setup-start.sh
-          $script_directory/setup/setup-start.sh
+          find $SCRIPTS_DIR -type f -iname "*.sh" -exec chmod +x {} \;
+          $SCRIPTS_DIR/setup/setup-start.sh

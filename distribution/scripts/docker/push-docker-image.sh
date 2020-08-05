@@ -12,9 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 # ----------------------------------------------------------------------------
-# Script to push a docker image to the Amazon Elastic Container Registry
+# Script to push a Docker image to the Amazon Elastic Container Registry (ECR).
 # ----------------------------------------------------------------------------
 
 dockerfile_location=""
@@ -56,7 +56,7 @@ while getopts "d:i:t:h" opts; do
 done
 
 if [[ -z $dockerfile_location ]]; then
-    echo "Please specify the location of the dockerfile."
+    echo "Please specify the location of the Dockerfile."
     exit 1
 fi
 
@@ -70,19 +70,19 @@ if [[ ! -f "$dockerfile_location/Dockerfile" ]]; then
     exit 1
 fi
 
-docker build -t $aws_ecr_link/$image_name:$tag_name $dockerfile_location
+docker build -t $AWS_ECR_URL/$image_name:$tag_name $dockerfile_location
 
-if ! command docker inspect --type=image $aws_ecr_link/$image_name:$tag_name
+if ! command docker inspect --type=image $AWS_ECR_URL/$image_name:$tag_name
 then
-    echo "Docker image was not created properly"
+    echo "Docker image was not created properly."
     exit 1
 fi
 
-if command aws ecr get-login-password --region $aws_region | docker login --username AWS --password-stdin $aws_ecr_link
+if command aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ECR_URL
 then
-    echo "Logged into ecr succesfully"
+    echo "Logged into ECR successfully."
 else
-    echo "Problem logging into ecr"
+    echo "Logging into ECR failed."
     exit 1
 fi
 
@@ -94,12 +94,12 @@ fi
 aws ecr create-repository \
     --repository-name $image_name \
     --image-scanning-configuration scanOnPush=true \
-    --region $aws_region
+    --region $AWS_REGION
     
-if command docker push $aws_ecr_link/$image_name:$tag_name
+if command docker push $AWS_ECR_URL/$image_name:$tag_name
 then
-    echo "$image_name pushed to ECR succesfully"
+    echo "Docker image '$image_name:$tag_name' pushed to ECR successfully."
 else
-    echo "Could not push $image_name to ECR"
+    echo "Failed to push the image '$image_name:$tag_name' to ECR."
     exit
 fi

@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 # ----------------------------------------------------------------------------
 # Split JTL file
 # ----------------------------------------------------------------------------
@@ -54,4 +54,4 @@ if [[ -z $heap_size ]]; then
     exit 1
 fi
 
-java -Xms${heap_size} -Xmx${heap_size}  -jar ./jtl-splitter-$version.jar $jtl_splitter_flags
+java -Xms${heap_size} -Xmx${heap_size}  -jar ./jtl-splitter-$COMPONENTS_VERSION.jar $jtl_splitter_flags

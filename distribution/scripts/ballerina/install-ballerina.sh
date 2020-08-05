@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 # ----------------------------------------------------------------------------
 # Installation script for setting up Ballerina on Linux.
 # ----------------------------------------------------------------------------
@@ -24,8 +24,10 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
-wget -O /home/ubuntu/ballerina-zip.zip $bal_download_link
-
-mkdir /home/ubuntu/bal-directory
-
-bsdtar --strip-components=1 -C /home/ubuntu/bal-directory -xvf /home/ubuntu/ballerina-zip.zip
+echo "Installing Ballerina..."
+mkdir $BALLERINA_DIR
+wget -O ballerina-distribution.zip $BALLERINA_ZIP_URL
+bsdtar --strip-components=1 -C $BALLERINA_DIR -xvf ballerina-distribution.zip
+export PATH="$BALLERINA_DIR/bin:$PATH"
+echo "Ballerina version:"
+ballerina -v

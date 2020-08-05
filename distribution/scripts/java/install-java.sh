@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 # ----------------------------------------------------------------------------
 # Installation script for setting up Java on Linux.
 # ----------------------------------------------------------------------------
@@ -24,5 +24,9 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
-# Install Java
+echo "Installing Java..."
 apt-get -y install openjdk-8-jdk
+export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+export PATH="$JAVA_HOME/bin:$PATH"
+echo "Java version:"
+java -version

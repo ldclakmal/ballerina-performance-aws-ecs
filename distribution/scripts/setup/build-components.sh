@@ -14,9 +14,9 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
+
 # ----------------------------------------------------------------------------
-# Script to install maven and build project
+# Script to build the components.
 # ----------------------------------------------------------------------------
 
 # Make sure the script is running as root.
@@ -26,12 +26,8 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
-if ! command -v mvn >/dev/null 2>&1; then
-    apt -y install maven
-fi
-
 # Build the performance test components
-mvn -f $repo_directory package
+mvn -f $GITHUB_REPO_DIR package
 STATUS=$?
 if [ $STATUS -eq 0 ]; then
    echo "Maven build successful."

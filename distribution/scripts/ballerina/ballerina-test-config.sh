@@ -14,9 +14,9 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
+
 # ----------------------------------------------------------------------------
-# Decleration of tests for JMeter 
+# Declaration of tests for JMeter
 # ----------------------------------------------------------------------------
 
 declare -A test_scenario0=(

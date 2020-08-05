@@ -14,9 +14,9 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
+
 # ----------------------------------------------------------------------------
-# Script to install the AWS CLI
+# Script to install tools required.
 # ----------------------------------------------------------------------------
 
 # Make sure the script is running as root.
@@ -26,12 +26,17 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
+# Install LibArchive tools
+apt install -y libarchive-tools
+
+# Install AWS CLI
+aws_cli_url="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+
+curl "$aws_cli_url" -o "/home/ubuntu/awscliv2.zip"
+bsdtar -C /home/ubuntu -xvf /home/ubuntu/awscliv2.zip
+/home/ubuntu/aws/install
+
+# Install Maven
 if ! command -v mvn >/dev/null 2>&1; then
     apt -y install maven
 fi
-
-curl "$aws_cli_download_link" -o "/home/ubuntu/awscliv2.zip"
-
-bsdtar -C /home/ubuntu -xvf /home/ubuntu/awscli.zip
-
-/home/ubuntu/aws/install
