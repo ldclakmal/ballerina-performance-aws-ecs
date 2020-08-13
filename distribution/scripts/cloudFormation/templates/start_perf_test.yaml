@@ -368,7 +368,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     DependsOn: MountTarget
     Properties:
-      ImageId: ami-0a63f96e85105c6d3
+      ImageId: ami-0bcc094591f354be2
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
       IamInstanceProfile: !Ref EC2InstanceProfile
