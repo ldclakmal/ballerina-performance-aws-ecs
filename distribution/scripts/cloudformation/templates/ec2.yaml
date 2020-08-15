@@ -47,7 +47,7 @@ Parameters:
   GitHubRepoBranch:
     Type: String
     Description: Branch of the github repo of the ballerina performance tests.
-    Default: "dev"
+    Default: "master"
   BallerinaZipURL:
     Type: String
     Description: URL for the Ballerina Zip file.
