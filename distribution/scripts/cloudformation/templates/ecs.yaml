@@ -39,10 +39,10 @@ Parameters:
     Description: ID of the private subnet
   NettyImage:
     Type: String
-    Description: URI of the netty image on ECR
-  TestImage:
+    Description: URI of the Netty image on ECR
+  BallerinaTestImage:
     Type: String
-    Description: URI of the test image on ECR
+    Description: URI of the Ballerina test image on ECR
   SecurityGroup:
     Type: String
     Description: ID of the Security Group
@@ -230,7 +230,7 @@ Resources:
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       ContainerDefinitions:
         - Name: bal-container
-          Image: !Ref TestImage
+          Image: !Ref BallerinaTestImage
           PortMappings:
             - ContainerPort: 9090
               Protocol: tcp

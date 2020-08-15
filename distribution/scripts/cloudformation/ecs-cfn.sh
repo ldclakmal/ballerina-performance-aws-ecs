@@ -18,12 +18,44 @@
 # ----------------------------------------------------------------------------
 
 template_body_location="file://$SCRIPTS_DIR/cloudformation/templates/ecs.yaml"
+test_name=""
+
+function usage() {
+    echo ""
+    echo "Usage: "
+    echo "$0 [-t <Name of the test>] [-h]"
+    echo ""
+    echo "-t: Name of the test"
+    echo ""
+}
+
+while getopts "t:h" opt; do
+    case "${opt}" in
+    t)
+        test_name=${OPTARG}
+        ;;
+    h)
+        usage
+        exit 0
+        ;;
+    \?)
+        echo "Invalid option -$OPTARG" >&2
+        ;;
+    esac
+done
+
+if [[ -z $test_name ]]; then
+    echo "Please provide the name of the test to start ECS cluster."
+    exit 1
+else
+    echo "Starting ECS cluster for $test_name."
+fi
 
 aws cloudformation create-stack --stack-name ecs-stack --template-body $template_body_location --parameters \
 ParameterKey=UserEmail,ParameterValue=$USER_EMAIL \
 ParameterKey=PrivateSubnet,ParameterValue=$PRIVATE_SUBNET \
 ParameterKey=NettyImage,ParameterValue=$AWS_ECR_URL/netty-echo-backend:latest \
-ParameterKey=TestImage,ParameterValue=$AWS_ECR_URL/h1c_h1c_passthrough:latest \
+ParameterKey=BallerinaTestImage,ParameterValue=$AWS_ECR_URL/$test_name:latest \
 ParameterKey=SecurityGroup,ParameterValue=$SECURITY_GROUP \
 ParameterKey=VPC,ParameterValue=$VPC \
 ParameterKey=BallerinaMemory,ParameterValue=$BALLERINA_MEMORY \

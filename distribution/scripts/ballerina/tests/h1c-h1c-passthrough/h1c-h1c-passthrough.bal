@@ -33,7 +33,7 @@ service passthroughService on new http:Listener(9090) {
         if (response is http:Response) {
             var result = caller->respond(response);
         } else {
-            log:printError("Error at h1c_h1c_passthrough", err = response);
+            log:printError("Error at h1c-h1c-passthrough", err = response);
             http:Response res = new;
             res.statusCode = 500;
             res.setPayload(response.message());

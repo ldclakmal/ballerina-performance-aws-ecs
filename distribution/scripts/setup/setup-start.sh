@@ -42,10 +42,12 @@ source $SCRIPTS_DIR/jmeter/install-jmeter.sh
 # Build components package
 $SCRIPTS_DIR/setup/build-components.sh
 
+ballerina_test_scenario="h1c-h1c-passthrough"
+
 # Create Docker images and push to ECR
 $SCRIPTS_DIR/netty/make-netty-image.sh
-$SCRIPTS_DIR/ballerina/make-ballerina-image.sh -t "h1c-h1c-passthrough"
+$SCRIPTS_DIR/ballerina/make-ballerina-image.sh -t $ballerina_test_scenario
 $SCRIPTS_DIR/jmeter/make-jmeter-image.sh
 
 # Create ECS cluster
-source $SCRIPTS_DIR/cloudformation/ecs-cfn.sh
+$SCRIPTS_DIR/cloudformation/ecs-cfn.sh -t $ballerina_test_scenario

@@ -20,10 +20,10 @@
 # ----------------------------------------------------------------------------
 
 declare -A test_scenario0=(
-    [name]="h1c_h1c_passthrough"
+    [name]="h1c-h1c-passthrough"
     [display_name]="Passthrough HTTP service (h1c -> h1c)"
     [description]="An HTTP Service, which forwards all requests to an HTTP back-end service."
-    [bal]="h1c_h1c_passthrough.jar"
+    [bal]="h1c-h1c-passthrough.jar"
     [bal_flags]=""
     [path]="/passthrough"
     [jmx]="http-post-request.jmx"
