@@ -31,6 +31,9 @@ export COMPONENTS_VERSION="0.1.0-SNAPSHOT"
 export DOWNLOADS_DIR="$HOME_DIR/downloads"
 export BALLERINA_DIR="$HOME_DIR/ballerina"
 export JMETER_DIR="$HOME_DIR/jmeter"
+export NETTY_DOCKER_DIR="$HOME_DIR/docker-images/netty"
+export BALLERINA_DOCKER_DIR="$HOME_DIR/docker-images/ballerina"
+export JMETER_DOCKER_DIR="$HOME_DIR/docker-images/jmeter"
 
 export AWS_ECR_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 

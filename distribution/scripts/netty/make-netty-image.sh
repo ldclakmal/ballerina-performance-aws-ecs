@@ -20,13 +20,17 @@
 netty_service_name="netty-http-echo-service"
 netty_image_name="netty-echo-backend"
 
-cd $SCRIPTS_DIR/netty
+mkdir -p $NETTY_DOCKER_DIR
+cd $NETTY_DOCKER_DIR
+
+cp $GITHUB_REPO_DIR/components/netty-http-echo-service/target/$netty_service_name-$COMPONENTS_VERSION.jar .
+cp $SCRIPTS_DIR/netty/start-netty.sh .
+
 touch Dockerfile
 
 echo "FROM alpine:3.12.0" >> Dockerfile
 echo "USER root" >> Dockerfile
 echo "RUN apk add openjdk8=8.252.09-r0" >> Dockerfile
-cp $GITHUB_REPO_DIR/components/netty-http-echo-service/target/$netty_service_name-$COMPONENTS_VERSION.jar .
 echo "COPY $netty_service_name-$COMPONENTS_VERSION.jar ." >> Dockerfile
 echo "COPY start-netty.sh ." >> Dockerfile
 echo "ENTRYPOINT ./start-netty.sh -j $netty_service_name-$COMPONENTS_VERSION.jar" >> Dockerfile
@@ -34,4 +38,4 @@ echo "ENTRYPOINT ./start-netty.sh -j $netty_service_name-$COMPONENTS_VERSION.jar
 cd $HOME_DIR
 
 # Push image to ECR
-$SCRIPTS_DIR/docker/push-docker-image.sh -d $SCRIPTS_DIR/netty -i $netty_image_name
+$SCRIPTS_DIR/docker/push-docker-image.sh -d $NETTY_DOCKER_DIR -i $netty_image_name

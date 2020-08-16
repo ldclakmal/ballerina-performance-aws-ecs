@@ -17,9 +17,11 @@
 # Create JMeter Docker image and push to ECR.
 # ----------------------------------------------------------------------------
 
-cd $JMETER_DIR
+mkdir -p $JMETER_DOCKER_DIR
+cd $JMETER_DOCKER_DIR
 
 # Copy all required files
+cp -R $JMETER_DIR/* $JMETER_DOCKER_DIR/
 cp $GITHUB_REPO_DIR/components/jtl-splitter/target/jtl-splitter-$COMPONENTS_VERSION.jar .
 cp $GITHUB_REPO_DIR/components/payload-generator/target/payload-generator-$COMPONENTS_VERSION.jar .
 cp $SCRIPTS_DIR/ballerina/ballerina-test-config.sh .
@@ -44,4 +46,4 @@ echo "CMD ./start-jmeter-test.sh $JMETER_OPTIONS -a \$HOST_NAME -v $COMPONENTS_V
 cd $HOME_DIR
 
 # Push image to ECR
-$SCRIPTS_DIR/docker/push-docker-image.sh -d $JMETER_DIR -i jmeter-client
+$SCRIPTS_DIR/docker/push-docker-image.sh -d $JMETER_DOCKER_DIR -i jmeter-client

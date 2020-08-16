@@ -50,10 +50,13 @@ else
     echo "Starting to build $test_name."
 fi
 
-test_dir="$SCRIPTS_DIR/ballerina/tests/$test_name"
+mkdir -p $BALLERINA_DOCKER_DIR
+cd $BALLERINA_DOCKER_DIR
 
-cd $test_dir
+cp $SCRIPTS_DIR/ballerina/start-ballerina-test.sh .
+cp $SCRIPTS_DIR/ballerina/tests/$test_name/* .
 ballerina build $test_name.bal
+
 touch Dockerfile
 
 echo "FROM alpine:3.12.0" >> Dockerfile
@@ -61,11 +64,10 @@ echo "USER root" >> Dockerfile
 echo "RUN apk add openjdk8=8.252.09-r0" >> Dockerfile
 echo "ENV NETTY_HOST \"\"" >> Dockerfile
 echo "COPY $test_name.jar ." >> Dockerfile
-cp $SCRIPTS_DIR/ballerina/start-ballerina-test.sh .
 echo "COPY start-ballerina-test.sh ." >> Dockerfile
 echo "ENTRYPOINT ./start-ballerina-test.sh -n \$NETTY_HOST -t $test_name" >> Dockerfile
 
 cd $HOME_DIR
 
 # Push image to ECR
-$SCRIPTS_DIR/docker/push-docker-image.sh -d $test_dir -i $test_name
+$SCRIPTS_DIR/docker/push-docker-image.sh -d $BALLERINA_DOCKER_DIR -i $test_name
