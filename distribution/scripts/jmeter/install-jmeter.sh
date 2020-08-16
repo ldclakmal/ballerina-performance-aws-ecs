@@ -29,8 +29,8 @@ fi
 echo "Installing JMeter..."
 jmeter_url="https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.3.tgz"
 mkdir $JMETER_DIR
-wget -O apache-jmeter.tgz $jmeter_url
-bsdtar -C $JMETER_DIR -xvf apache-jmeter.tgz
+wget -O $DOWNLOADS_DIR/apache-jmeter.tgz $jmeter_url
+bsdtar -C $JMETER_DIR -xvf $DOWNLOADS_DIR/apache-jmeter.tgz
 export PATH="$JMETER_DIR/apache-jmeter-5.3/bin:$PATH"
 echo "JMeter version:"
 JVM_ARGS="-Xms512m -Xmx512m" jmeter -v

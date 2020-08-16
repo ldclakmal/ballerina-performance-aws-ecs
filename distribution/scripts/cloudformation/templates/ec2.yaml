@@ -338,7 +338,7 @@ Resources:
           CidrIp: 0.0.0.0/0
 
   ##########################################################################################
-  # Create File system
+  # Create File System
   ##########################################################################################
   FileSystem:
     Type: AWS::EFS::FileSystem
@@ -392,12 +392,11 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash -xe
-          export GITHUB_REPO_DIR="/home/ubuntu/ballerina-performance-aws-ecs"
-          export SCRIPTS_DIR="$GITHUB_REPO_DIR/distribution/scripts"
+          export GITHUB_REPO_URL="${GitHubRepoURL}"
+          export GITHUB_REPO_BRANCH="${GitHubRepoBranch}"
           export BALLERINA_ZIP_URL="${BallerinaZipURL}"
           export JMETER_OPTIONS="${JMeterOptions}"
           export FILE_SYSTEM="${FileSystem}"
-          export FILE_SYSTEM_DIR="/mnt/efs/"
           export BALLERINA_MEMORY="${BallerinaMemory}"
           export BALLERINA_CPU="${BallerinaCPU}"
           export USER_EMAIL="${UserEmail}"
@@ -406,15 +405,18 @@ Resources:
           export VPC="${VPC}"
           export AWS_ACCOUNT_ID="${AWS::AccountId}"
           export AWS_REGION="${AWS::Region}"
-          export AWS_ECR_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
-          apt-get update
-          apt-get install -y curl nfs-common
+          # Mount directory to read ECS output
+          export FILE_SYSTEM_DIR="/mnt/efs/"
           mkdir $FILE_SYSTEM_DIR
           mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 $FILE_SYSTEM.efs.$AWS_REGION.amazonaws.com:/ $FILE_SYSTEM_DIR
-          # Start by cloning the GitHub repository.
-          git clone -b ${GitHubRepoBranch} ${GitHubRepoURL} $GITHUB_REPO_DIR
+          # Start setup.
+          export HOME_DIR="/home/ubuntu"
+          export GITHUB_REPO_DIR="$HOME_DIR/ballerina-performance-aws-ecs"
+          export SCRIPTS_DIR="$GITHUB_REPO_DIR/distribution/scripts"
+          # Clone the GitHub repository.
+          git clone -b $GITHUB_REPO_BRANCH $GITHUB_REPO_URL $GITHUB_REPO_DIR
           if [ ! -d $GITHUB_REPO_DIR ]; then
-            echo "Could not pull the ECS performance test repository."
+            echo "Failed to clone the GitHub repository $GITHUB_REPO_URL."
             exit 1
           fi
           if [ ! -d $SCRIPTS_DIR ]; then

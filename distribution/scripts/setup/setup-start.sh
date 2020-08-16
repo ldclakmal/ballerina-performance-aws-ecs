@@ -28,9 +28,13 @@ fi
 export COMPONENTS_VERSION="0.1.0-SNAPSHOT"
 
 # Directories
-export HOME_DIR="/home/ubuntu"
-export BALLERINA_DIR="/home/ubuntu/ballerina"
-export JMETER_DIR="/home/ubuntu/jmeter"
+export DOWNLOADS_DIR="$HOME_DIR/downloads"
+export BALLERINA_DIR="$HOME_DIR/ballerina"
+export JMETER_DIR="$HOME_DIR/jmeter"
+
+export AWS_ECR_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+
+cd $HOME_DIR
 
 # Install required tools and packages
 source $SCRIPTS_DIR/setup/install-tools.sh

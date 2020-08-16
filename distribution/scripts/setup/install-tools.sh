@@ -26,17 +26,20 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
-# Install LibArchive tools
+# Install tools
+apt-get update
+apt-get install -y curl nfs-common
 apt install -y libarchive-tools
 
 # Install AWS CLI
-aws_cli_url="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
-
-curl "$aws_cli_url" -o "/home/ubuntu/awscliv2.zip"
-bsdtar -C /home/ubuntu -xvf /home/ubuntu/awscliv2.zip
-/home/ubuntu/aws/install
+awscli_url="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+curl $awscli_url -o $DOWNLOADS_DIR/awscliv2.zip
+bsdtar -C $HOME_DIR -xvf $DOWNLOADS_DIR/awscliv2.zip
+$HOME_DIR/aws/install
+aws --version
 
 # Install Maven
 if ! command -v mvn >/dev/null 2>&1; then
     apt -y install maven
 fi
+mvn -v

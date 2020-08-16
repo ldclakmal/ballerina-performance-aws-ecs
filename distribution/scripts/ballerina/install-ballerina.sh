@@ -26,8 +26,8 @@ fi
 
 echo "Installing Ballerina..."
 mkdir $BALLERINA_DIR
-wget -O ballerina-distribution.zip $BALLERINA_ZIP_URL
-bsdtar --strip-components=1 -C $BALLERINA_DIR -xvf ballerina-distribution.zip
+wget -O $DOWNLOADS_DIR/ballerina-distribution.zip $BALLERINA_ZIP_URL
+bsdtar --strip-components=1 -C $BALLERINA_DIR -xvf $DOWNLOADS_DIR/ballerina-distribution.zip
 export PATH="$BALLERINA_DIR/bin:$PATH"
 echo "Ballerina version:"
 ballerina -v
