@@ -34,6 +34,7 @@ export JMETER_DIR="$HOME_DIR/jmeter"
 
 export AWS_ECR_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 
+mkdir $DOWNLOADS_DIR
 cd $HOME_DIR
 
 # Install required tools and packages

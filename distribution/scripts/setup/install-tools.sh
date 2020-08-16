@@ -26,11 +26,6 @@ if [ "$UID" -ne "0" ]; then
     exit 9
 fi
 
-# Install tools
-apt-get update
-apt-get install -y curl nfs-common
-apt install -y libarchive-tools
-
 # Install AWS CLI
 awscli_url="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
 curl $awscli_url -o $DOWNLOADS_DIR/awscliv2.zip
