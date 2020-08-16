@@ -60,4 +60,4 @@ ParameterKey=SecurityGroup,ParameterValue=$SECURITY_GROUP \
 ParameterKey=VPC,ParameterValue=$VPC \
 ParameterKey=BallerinaMemory,ParameterValue=$BALLERINA_MEMORY \
 ParameterKey=BallerinaCPU,ParameterValue=$BALLERINA_CPU \
---capabilities CAPABILITY_IAM
+--capabilities CAPABILITY_IAM --tags Key=User,Value=$USER_EMAIL

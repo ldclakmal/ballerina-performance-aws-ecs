@@ -96,7 +96,7 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: 'perf-test-cluster'
+      ClusterName: 'ballerina-performance-test'
       Tags:
         - Key: Name
           Value: !Join
@@ -143,7 +143,7 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: 'perf-test'
+              awslogs-group: 'ballerina-performance-test'
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: 'netty'
       Tags:
@@ -188,7 +188,7 @@ Resources:
   NettyTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: netty-tg
+      Name: netty-target-group
       VpcId: !Ref VPC
       Port: 8688
       Protocol: TCP
@@ -221,7 +221,7 @@ Resources:
     Type: AWS::ECS::TaskDefinition
     DependsOn: LoadBalancer
     Properties:
-      Family: bal
+      Family: ballerina
       Cpu: !Ref BallerinaCPU
       Memory: !Ref BallerinaMemory
       NetworkMode: awsvpc
@@ -229,7 +229,7 @@ Resources:
         - FARGATE
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       ContainerDefinitions:
-        - Name: bal-container
+        - Name: ballerina-container
           Image: !Ref BallerinaTestImage
           PortMappings:
             - ContainerPort: 9090
@@ -240,9 +240,9 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: 'perf-test'
+              awslogs-group: 'ballerina-performance-test'
               awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: 'bal-test'
+              awslogs-stream-prefix: 'ballerina'
       Tags:
         - Key: Name
           Value: !Join
@@ -255,7 +255,7 @@ Resources:
     Type: AWS::ECS::Service
     DependsOn: NettyLoadBalancerListener
     Properties:
-      ServiceName: bal-service
+      ServiceName: ballerina-service
       TaskDefinition: !Ref BalTask
       Cluster: !Ref ECSCluster
       LaunchType: FARGATE
@@ -271,7 +271,7 @@ Resources:
           SecurityGroups:
             - !Ref SecurityGroup
       LoadBalancers:
-        - ContainerName: bal-container
+        - ContainerName: ballerina-container
           ContainerPort: 9090
           TargetGroupArn: !Ref BalTargetGroup
       Tags:
@@ -285,7 +285,7 @@ Resources:
   BalTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: bal-tg
+      Name: ballerina-target-group
       VpcId: !Ref VPC
       Port: 9090
       Protocol: TCP
