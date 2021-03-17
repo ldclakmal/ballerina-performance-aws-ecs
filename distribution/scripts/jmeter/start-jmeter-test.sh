@@ -19,6 +19,10 @@
 # Script to run JMeter test inside the Docker image.
 # ----------------------------------------------------------------------------
 
+#intall jq tools
+echo "y" | apt-get install jq
+#install zip tools
+echo "y" | apt-get install zip
 # Application heap Sizes
 declare -a heap_sizes_array
 # Concurrent users (will be divided among JMeter servers)
@@ -37,9 +41,8 @@ default_jmeter_client_heap_size=2G
 jmeter_client_heap_size=$default_jmeter_client_heap_size
 
 # Version used for the splitter and the payload generator
-export version=""
-# IP or hostname for the Ballerina server
-export hostname=""
+#export version=""
+export COMPONENTS_VERSION=0.1.0-SNAPSHOT
 
 # Heap size of Netty Service
 default_netty_service_heap_size=4G
@@ -88,7 +91,7 @@ function usage() {
 
 # Reset getopts
 OPTIND=0
-while getopts "u:b:m:d:w:k:l:i:e:tp:a:v:h" opts; do
+while getopts "u:b:m:d:w:k:l:i:e:t:p:v:h" opts; do
     case $opts in
     u)
         concurrent_users_array+=("${OPTARG}")
@@ -122,9 +125,6 @@ while getopts "u:b:m:d:w:k:l:i:e:tp:a:v:h" opts; do
         ;;
     p)
         estimated_processing_time_in_between_tests=${OPTARG}
-        ;;
-    a)
-        hostname=${OPTARG}
         ;;
     v)
         version=${OPTARG}
@@ -175,11 +175,6 @@ if [[ -z $warmup_time ]]; then
     exit 1
 fi
 
-if [[ -z $hostname ]]; then
-    echo "Please provide the IP or DNS of server/loadbalancer."
-    exit 1
-fi
-
 if [[ -z $COMPONENTS_VERSION ]]; then
     echo "Please provide the version for the performance test."
     exit 1
@@ -226,19 +221,18 @@ if ! [[ $netty_service_heap_size =~ $heap_regex ]]; then
     exit 1
 fi
 
-
 # Get the test configuration
-source ./ballerina-test-config.sh
+source $SCRIPTS_DIR/ballerina/ballerina-test-config.sh
 
 # Get the test utils
-source ./jmeter-test-util.sh
-
+source $SCRIPTS_DIR/jmeter/jmeter-test-util.sh
 
 function initialize_test() {
     # Filter scenarios
     if [[ ${#include_scenario_names[@]} -gt 0 ]] || [[ ${#exclude_scenario_names[@]} -gt 0 ]]; then
         declare -n scenario
         for scenario in ${!test_scenario@}; do
+            echo "$scenario"
             scenario[skip]=true
             for name in ${include_scenario_names[@]}; do
                 if [[ ${scenario[name]} =~ $name ]]; then
@@ -258,9 +252,9 @@ function initialize_test() {
     local all_scenarios=""
     for scenario in ${!test_scenario@}; do
         local skip=${scenario[skip]}
-        if [ $skip = true ]; then
-            continue
-        fi
+#         if [ $skip = true ]; then
+#             continue
+#         fi
         all_scenarios+=$(jq -n \
             --arg name "${scenario[name]}" \
             --arg display_name "${scenario[display_name]}" \
@@ -292,12 +286,8 @@ function initialize_test() {
         for dir in ./apache-jmeter*; do
             [ -d "${dir}" ] && jmeter_dir="${dir}" && break
         done
-        if [[ -d $jmeter_dir ]]; then
-            export JMETER_HOME="${jmeter_dir}"
-            export PATH=$JMETER_HOME/bin:$PATH
-        else
-            echo "WARNING: Could not find JMeter directory."
-        fi
+        jmeter_dir="$HOME_DIR/jmeter/apache-jmeter-5.3"
+        JMETER_HOME=$jmeter_dir
 
         if [[ -d results ]]; then
             echo "Results directory already exists. Please backup."
@@ -307,18 +297,18 @@ function initialize_test() {
             echo "The results.zip file already exists. Please backup."
             exit 1
         fi
-        #mkdir results
-        cp $0 results/
+        mkdir results
+        #cp $0 results/
         mv test-metadata.json results/
 
         declare -a payload_sizes
         for msize in ${message_sizes_array[@]}; do
             payload_sizes+=("-s" "$msize")
         done
-
+        
         # Payloads should be created in the $HOME directory
-        chmod +x ./generate-payload.sh
-        if ! ./generate-payload.sh -p $payload_type ${payload_sizes[@]}; then
+        chmod +x $SCRIPTS_DIR/jmeter/generate-payload.sh
+        if ! $SCRIPTS_DIR/jmeter/generate-payload.sh -p $payload_type ${payload_sizes[@]}; then
             echo "WARNING: Failed to generate payloads!"
         fi
     fi
@@ -343,9 +333,31 @@ function test_scenarios() {
         declare -ng scenario
         for scenario in ${!test_scenario@}; do
             local skip=${scenario[skip]}
-            if [ $skip = true ]; then
-                continue
+#             if [ $skip = true ]; then
+#                 continue
+#             fi
+
+            export scenario_name=${scenario[name]}
+            export scenario_flags=${scenario[netty_options]}
+            
+            # Create Docker images and push to ECR
+            $SCRIPTS_DIR/netty/make-netty-image.sh $scenario_flags
+            $SCRIPTS_DIR/ballerina/make-ballerina-image.sh -t $scenario_name
+
+            # Create ECS cluster
+            $SCRIPTS_DIR/cloudformation/ecs-cfn.sh -t $scenario_name
+
+            # Take Ballerina task ip
+            #aws ecs wait services-stable --cluster ballerina-performance-test --services ballerina-service
+            sleep 6m
+            taskid=$(aws ecs list-tasks --cluster ballerina-performance-test --service-name ballerina-service --query ["taskArns"][0][0] --output text)
+            hostname=$(aws ecs describe-tasks --cluster ballerina-performance-test --tasks $taskid --query 'tasks[*].attachments[].details[].value | [4]' --output text)
+        
+            if [[ -z $hostname ]]; then
+                echo "Did not assign any ipv4 address for ballerina proxy."
+                exit 1
             fi
+            
             local scenario_name=${scenario[name]}
             local jmx_file=${scenario[jmx]}
             for users in ${concurrent_users_array[@]}; do
@@ -371,9 +383,9 @@ function test_scenarios() {
 
                     before_execute_test_scenario
 
-                    export JVM_ARGS="-Xms$jmeter_client_heap_size -Xmx$jmeter_client_heap_size -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$report_location/jmeter_gc.log $JMETER_JVM_ARGS"
-
-                    local jmeter_command="jmeter -n -t ./${jmx_file} -j $report_location/jmeter.log $jmeter_remote_args"
+                    export JVM_ARGS="-Xms$jmeter_client_heap_size -Xmx$jmeter_client_heap_size -XX:+PrintGC -XX:+PrintGCDetails -Xloggc:$report_location/jmeter_gc.log"
+                    #copy jmx file to the jmeter bin folder
+                    local jmeter_command="jmeter -n -t $SCRIPTS_DIR/jmeter/${jmx_file} -j $report_location/jmeter.log $jmeter_remote_args"
 
                     for param in ${jmeter_params[@]}; do
                         jmeter_command+=" -J$param"
@@ -387,11 +399,15 @@ function test_scenarios() {
                     test_start_timestamp=$(date +%s)
                     echo "Start timestamp: $test_start_timestamp"
                     # Run JMeter in background
-                    $jmeter_command &
+                    var_path1=`pwd`
+                    cd /home/ubuntu/jmeter/apache-jmeter-5.3/bin
+                    sh $jmeter_command &
                     local jmeter_pid="$!"
                     if ! wait $jmeter_pid; then
                         echo "WARNING: JMeter execution failed."
                     fi
+                    cd $var_path1
+                    
                     # End timestamp
                     test_end_timestamp="$(date +%s)"
                     echo "End timestamp: $test_end_timestamp"
@@ -408,8 +424,8 @@ function test_scenarios() {
                         # Delete the original JTL file to save space.
                         # Can merge files using the command: awk 'FNR==1 && NR!=1{next;}{print}'
                         # However, the merged file may not be same as original and that should be okay
-                        chmod +x ./jtl-splitter.sh
-                        ./jtl-splitter.sh -- -f ${report_location}/results.jtl -d -t $warmup_time -u SECONDS -s
+                        chmod +x $SCRIPTS_DIR/jmeter/jtl-splitter.sh
+                        $SCRIPTS_DIR/jmeter/jtl-splitter.sh -- -f ${report_location}/results.jtl -d -t $warmup_time -u SECONDS -s
                         echo "Zipping JTL files in ${report_location}"
                         zip -jm ${report_location}/jtls.zip ${report_location}/results*.jtl
                     fi
@@ -421,6 +437,8 @@ function test_scenarios() {
                     record_scenario_duration $scenario_name $current_execution_duration
                 done
             done
+            aws cloudformation delete-stack --stack-name ecs-stack
+            sleep 6m
         done
     done
 }
