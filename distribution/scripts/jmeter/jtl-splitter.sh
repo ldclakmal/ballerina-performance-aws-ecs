@@ -53,5 +53,7 @@ if [[ -z $heap_size ]]; then
     echo "Please specify the heap size."
     exit 1
 fi
-
+var_path=`pwd`
+cd /home/ubuntu/ballerina-performance-aws-ecs/components/jtl-splitter/target
 java -Xms${heap_size} -Xmx${heap_size}  -jar ./jtl-splitter-$COMPONENTS_VERSION.jar $jtl_splitter_flags
+cd $var_path
