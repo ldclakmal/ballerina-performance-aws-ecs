@@ -31,15 +31,16 @@ service passthroughService on new http:Listener(9090) {
         var response = nettyEP->forward("/service/EchoService", clientRequest);
 	
         if (response is http:Response) {
-            var result = caller->respond(response);
-        } else {
-            log:printError("Error at h1c-h1c-passthrough", err = response);
-            http:Response res = new;
-            res.statusCode = 500;
-            res.setPayload(response.message());
-            var result = caller->respond(res);
-        }
-    }
+            var clientResponse2=test(response);
+            var result = caller->respond(clientResponse2);
+        // } else {
+        //     log:printError("Error at h1c-h1c-passthrough", err = response);
+        //     http:Response res = new;
+        //     res.statusCode = 500;
+        //     res.setPayload(response.message());
+        //     var result = caller->respond(res);
+        // }
+    }}
     @http:ResourceConfig {
         methods: ["GET"],
         path: "/health-check"
@@ -54,3 +55,6 @@ service passthroughService on new http:Listener(9090) {
         }
     }
 }
+function test (http:Response res) returns @untainted http:Response {
+    return res;
+} 
