@@ -48,16 +48,16 @@ Parameters:
     Type: String
     Description: Branch of the github repo of the ballerina performance tests.
     Default: "master"
-  BallerinaZipURL:
+  BallerinaVersion:
     Type: String
-    Description: URL for the Ballerina Zip file.
-    ConstraintDescription: Must be the URL of the ballerina zip file.
-    Default: "https://dist.ballerina.io/downloads/swan-lake-preview2/ballerina-swan-lake-preview2.zip"
+    Description: Version for the Ballerina deb file.
+    ConstraintDescription: Must be the name of the ballerina deb file version.
+    Default: "swan-lake-preview7"
   JMeterOptions:
     Type: String
     Description: Options for JMeter.
     ConstraintDescription: A string of options for JMeter.
-    Default: "-u 100 -b 512 1024 2048 -d 600 -w 150 -i h1c"
+    Default: "-m 2G -u 100 -b 50"
   BallerinaMemory:
     Type: String
     Description: Memory Constraint for the test.
