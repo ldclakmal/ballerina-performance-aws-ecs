@@ -26,8 +26,7 @@ fi
 
 echo "Installing Ballerina..."
 mkdir $BALLERINA_DIR
-wget -O $DOWNLOADS_DIR/ballerina-distribution.zip $BALLERINA_ZIP_URL
-bsdtar --strip-components=1 -C $BALLERINA_DIR -xvf $DOWNLOADS_DIR/ballerina-distribution.zip
-export PATH="$BALLERINA_DIR/bin:$PATH"
+wget https://dist.ballerina.io/downloads/$BallerinaVersion/ballerina-linux-installer-x64-$BallerinaVersion.deb
+sudo dpkg -i ballerina-linux-installer-x64-$BallerinaVersion.deb 
 echo "Ballerina version:"
 ballerina -v
