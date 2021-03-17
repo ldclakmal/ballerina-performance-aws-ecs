@@ -19,7 +19,9 @@
 
 netty_service_name="netty-http-echo-service"
 netty_image_name="netty-echo-backend"
+netty_flags="$@"
 
+echo "$netty_flags"
 mkdir -p $NETTY_DOCKER_DIR
 cd $NETTY_DOCKER_DIR
 
@@ -30,10 +32,10 @@ touch Dockerfile
 
 echo "FROM alpine:3.12.0" >> Dockerfile
 echo "USER root" >> Dockerfile
-echo "RUN apk add openjdk8=8.252.09-r0" >> Dockerfile
+echo "RUN apk add openjdk8=8.275.01-r0" >> Dockerfile
 echo "COPY $netty_service_name-$COMPONENTS_VERSION.jar ." >> Dockerfile
 echo "COPY start-netty.sh ." >> Dockerfile
-echo "ENTRYPOINT ./start-netty.sh -j $netty_service_name-$COMPONENTS_VERSION.jar" >> Dockerfile
+echo "ENTRYPOINT ./start-netty.sh -j $netty_service_name-$COMPONENTS_VERSION.jar $netty_flags" >> Dockerfile
 
 cd $HOME_DIR
 
