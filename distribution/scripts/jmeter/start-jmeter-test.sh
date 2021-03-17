@@ -333,9 +333,9 @@ function test_scenarios() {
         declare -ng scenario
         for scenario in ${!test_scenario@}; do
             local skip=${scenario[skip]}
-#             if [ $skip = true ]; then
-#                 continue
-#             fi
+            if [ $skip = true ]; then
+                continue
+            fi
 
             export scenario_name=${scenario[name]}
             export scenario_flags=${scenario[netty_options]}
@@ -348,8 +348,8 @@ function test_scenarios() {
             $SCRIPTS_DIR/cloudformation/ecs-cfn.sh -t $scenario_name
 
             # Take Ballerina task ip
-            #aws ecs wait services-stable --cluster ballerina-performance-test --services ballerina-service
-            sleep 6m
+            aws cloudformation wait stack-create-complete --stack-name ecs-stack
+
             taskid=$(aws ecs list-tasks --cluster ballerina-performance-test --service-name ballerina-service --query ["taskArns"][0][0] --output text)
             hostname=$(aws ecs describe-tasks --cluster ballerina-performance-test --tasks $taskid --query 'tasks[*].attachments[].details[].value | [4]' --output text)
         
@@ -438,7 +438,7 @@ function test_scenarios() {
                 done
             done
             aws cloudformation delete-stack --stack-name ecs-stack
-            sleep 6m
+            aws cloudformation wait stack-delete-complete --stack-name ecs-stack
         done
     done
 }
