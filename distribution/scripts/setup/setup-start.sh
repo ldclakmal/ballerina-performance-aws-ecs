@@ -58,3 +58,13 @@ source $SCRIPTS_DIR/jmeter/start-jmeter-test.sh $JMETER_OPTIONS
 cd $GITHUB_REPO_DIR/testresults
 sudo chmod +x create-summary-csv.sh
 sudo ./create-summary-csv.sh -n Passthrough HTTP service -x
+
+#Push results to the git repo
+
+git add summary.md
+git add summary.csv
+git commit -m "Add existing file"
+sudo git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/SmithAbey/ballerina-performance-aws-ecs.git
+
+#Delete test stack and end the test
+aws cloudformation delete-stack --stack-name teststack
