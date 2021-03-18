@@ -64,7 +64,6 @@ sudo ./create-summary-csv.sh -n Passthrough HTTP service -x
 git add summary.md
 git add summary.csv
 git commit -m "Add existing file"
-sudo git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/SmithAbey/ballerina-performance-aws-ecs.git
 
 #Delete test stack and end the test
-aws cloudformation delete-stack --stack-name teststack
+#aws cloudformation delete-stack --stack-name teststack
