@@ -21,7 +21,7 @@
 # User inputs
 
 aws cloudformation create-stack --stack-name ec2-stack \
---template-body file:///home/shamith/Documents/Final/ec2.yaml \
+--template-body file:///home/shamith/Documents/Final/ballerina-performance-aws-ecs/distribution/scripts/cloudformation/templates/ec2.yaml \
 --parameters \
 ParameterKey=KeyName,ParameterValue=ballerina-performance-ecs \
 ParameterKey=InstanceType,ParameterValue=m4.10xlarge \
