@@ -394,7 +394,7 @@
               #!/bin/bash -xe
               export GITHUB_REPO_URL="${GitHubRepoURL}"
               export GITHUB_REPO_BRANCH="${GitHubRepoBranch}"
-              export BallerinaVersion="${BallerinaVersion}"
+              export BALLERINA_VERSION="${BallerinaVersion}"
               export JMETER_OPTIONS="${JMeterOptions}"
               export FILE_SYSTEM="${FileSystem}"
               export BALLERINA_MEMORY="${BallerinaMemory}"
