@@ -19,9 +19,9 @@
 # Script to run JMeter test inside the Docker image.
 # ----------------------------------------------------------------------------
 
-#intall jq tools
+# Intall jq tools
 echo "y" | apt-get install jq
-#install zip tools
+# Install zip tools
 echo "y" | apt-get install zip
 # Application heap Sizes
 declare -a heap_sizes_array
@@ -41,7 +41,6 @@ default_jmeter_client_heap_size=2G
 jmeter_client_heap_size=$default_jmeter_client_heap_size
 
 # Version used for the splitter and the payload generator
-#export version=""
 export COMPONENTS_VERSION=0.1.0-SNAPSHOT
 
 # Heap size of Netty Service
@@ -252,9 +251,9 @@ function initialize_test() {
     local all_scenarios=""
     for scenario in ${!test_scenario@}; do
         local skip=${scenario[skip]}
-#         if [ $skip = true ]; then
-#             continue
-#         fi
+        if [ $skip = true ]; then
+            continue
+        fi
         all_scenarios+=$(jq -n \
             --arg name "${scenario[name]}" \
             --arg display_name "${scenario[display_name]}" \
@@ -291,14 +290,12 @@ function initialize_test() {
 
         if [[ -d results ]]; then
             echo "Results directory already exists. Please backup."
-            #exit 1
         fi
         if [[ -f results.zip ]]; then
             echo "The results.zip file already exists. Please backup."
             exit 1
         fi
         mkdir results
-        #cp $0 results/
         mv test-metadata.json results/
 
         declare -a payload_sizes
@@ -347,7 +344,7 @@ function test_scenarios() {
             # Create ECS cluster
             $SCRIPTS_DIR/cloudformation/ecs-cfn.sh -t $scenario_name
 
-            # Take Ballerina task ip
+            # Take Ballerina task IP
             aws cloudformation wait stack-create-complete --stack-name ecs-stack
 
             taskid=$(aws ecs list-tasks --cluster ballerina-performance-test --service-name ballerina-service --query ["taskArns"][0][0] --output text)
@@ -384,7 +381,7 @@ function test_scenarios() {
                     before_execute_test_scenario
 
                     export JVM_ARGS="-Xms$jmeter_client_heap_size -Xmx$jmeter_client_heap_size -XX:+PrintGC -XX:+PrintGCDetails -Xloggc:$report_location/jmeter_gc.log"
-                    #copy jmx file to the jmeter bin folder
+                    # Copy jmx file to the jmeter bin folder
                     local jmeter_command="jmeter -n -t $SCRIPTS_DIR/jmeter/${jmx_file} -j $report_location/jmeter.log $jmeter_remote_args"
 
                     for param in ${jmeter_params[@]}; do

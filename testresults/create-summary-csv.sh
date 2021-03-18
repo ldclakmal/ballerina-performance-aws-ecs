@@ -337,8 +337,3 @@ for summary_json in $(find ${results_dir} -type f -name ${data_file} | sort -V);
     done
 done
 echo "Wrote summary statistics to $filename."
-
-#Create markdown file
-echo "y" | apt-get install python3.8
-echo "y" | apt-get install -y python3-humanize
-sudo python3 create-summary-markdown.py --column-names "Scenario Name" "Heap Size" "Concurrent Users" "Message Size (Bytes)" "Back-end Service Delay (ms)" "Label" "# Samples" "Error Count" "Error %" "Throughput (Requests/sec)" "Average Response Time (ms)" "Average Users in the System" "Standard Deviation of Response Time (ms)" "Minimum Response Time (ms)" "75th Percentile of Response Time (ms)" "90th Percentile of Response Time (ms)" "95th Percentile of Response Time (ms)" "98th Percentile of Response Time (ms)" "99th Percentile of Response Time (ms)" "99.9th Percentile of Response Time (ms)" "Received (KB/sec)" "Sent (KB/sec)" --json-parameters parameters=/home/ubuntu/results/test-metadata.json

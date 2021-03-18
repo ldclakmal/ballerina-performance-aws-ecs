@@ -57,7 +57,7 @@ Parameters:
     Type: String
     Description: Options for JMeter.
     ConstraintDescription: A string of options for JMeter.
-    Default: "-m 2G -u 100 -b 50"
+    Default: "-m 2G -u 100 -b 50 -b 100"
   BallerinaMemory:
     Type: String
     Description: Memory Constraint for the test.
