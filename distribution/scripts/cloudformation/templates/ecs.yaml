@@ -291,7 +291,7 @@ Resources:
       Protocol: TCP
       Matcher:
         HttpCode: 200-399
-      HealthCheckPath: /passthrough/health-check
+      HealthCheckPath: /passthrough/healthcheck
       HealthCheckProtocol: HTTP
       TargetType: ip
       Tags:
