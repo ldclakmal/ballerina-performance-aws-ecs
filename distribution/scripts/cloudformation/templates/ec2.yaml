@@ -47,7 +47,15 @@
       GitHubRepoBranch:
         Type: String
         Description: Branch of the github repo of the ballerina performance tests.
-        Default: "master"    
+        Default: "master"  
+      GitUsername:
+        Type: String
+        Description: CPU Constraint for the test.
+        Default: ""
+      GitPassword:
+        Type: String
+        Description: CPU Constraint for the test.
+        Default: ""  
       BallerinaVersion:
         Type: String
         Description: Version for the Ballerina deb file.
@@ -405,6 +413,8 @@
               export VPC="${VPC}"
               export AWS_ACCOUNT_ID="${AWS::AccountId}"
               export AWS_REGION="${AWS::Region}"
+              export GIT_USERNAME="${GitUsername}"
+              export GIT_PASSWORD="${GitPassword}"
               # Set custom directory as environment variables
               export HOME_DIR="/home/ubuntu"
               export GITHUB_REPO_DIR="$HOME_DIR/ballerina-performance-aws-ecs"

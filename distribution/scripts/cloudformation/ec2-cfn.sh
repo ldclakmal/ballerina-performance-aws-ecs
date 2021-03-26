@@ -24,13 +24,15 @@ aws cloudformation create-stack --stack-name ec2-stack \
 --template-body file:///home/shamith/Documents/Final/ballerina-performance-aws-ecs/distribution/scripts/cloudformation/templates/ec2.yaml \
 --parameters \
 ParameterKey=KeyName,ParameterValue=ballerina-performance-ecs \
-ParameterKey=InstanceType,ParameterValue=m4.10xlarge \
+ParameterKey=InstanceType,ParameterValue=c4.xlarge \
 ParameterKey=BallerinaMemory,ParameterValue=8192 \
 ParameterKey=BallerinaCPU,ParameterValue=4096 \
 ParameterKey=GitHubRepoBranch,ParameterValue=infrastructure-env-creation \
+ParameterKey=GitUsername,ParameterValue= \
+ParameterKey=GitPassword,ParameterValue= \
 ParameterKey=JMeterOptions,ParameterValue="-m 2G -u 100 -b 50 -b 100" \
-ParameterKey=UserEmail,ParameterValue=user@example.com \
-ParameterKey=BallerinaVersion,ParameterValue=swan-lake-preview7 \
+ParameterKey=UserEmail,ParameterValue=shamith@wso2.com \
+ParameterKey=BallerinaVersion,ParameterValue=swan-lake-alpha3 \
 --capabilities CAPABILITY_IAM --tags Key=User,Value=shamith@wso2.com
 
 echo "enter the following command to take log outputs after log in to the ec2 instance"
@@ -44,4 +46,6 @@ chmod 400 ballerina-performance-ecs.pem
 ec2_public_dns=$(aws ec2 describe-instances --query 'Reservations[*].Instances[].PublicDnsName |[-1]' --output text)
 ssh -i "ballerina-performance-ecs.pem" $ec2_public_dns -l ubuntu
 
+# Delete test stack and end the test
+aws cloudformation delete-stack --stack-name ec2-stack
 echo "Completed the ballerina performane aws ecs tests"
