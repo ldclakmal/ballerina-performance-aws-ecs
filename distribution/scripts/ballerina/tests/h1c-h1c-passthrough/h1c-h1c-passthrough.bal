@@ -1,4 +1,4 @@
-// Copyright (c) 2020 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -14,40 +14,31 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/config;
 import ballerina/http;
 import ballerina/log;
+import ballerina/os;
 
-http:Client nettyEP = new("http://" + config:getAsString("b7a.netty")+ ":8688");
+http:Client nettyEP = checkpanic new("http://" + os:getEnv("netty")+ ":8688");
 
-@http:ServiceConfig { basePath: "/passthrough" }
-service passthroughService on new http:Listener(9090) {
-
-    @http:ResourceConfig {
-        methods: ["POST"],
-        path: "/"
-    }
-    resource function passthrough(http:Caller caller, http:Request clientRequest) {
-        var response = nettyEP->forward("/service/EchoService", clientRequest);
-	
+service /passthrough on new http:Listener(9090) {
+    
+    resource function post .(http:Request req) returns http:Response|http:InternalServerError {
+        var response = nettyEP->forward("/service/EchoService", req);
         if (response is http:Response) {
-            var clientResponse2=test(response);
-            var result = caller->respond(clientResponse2);
-    }}
-    @http:ResourceConfig {
-        methods: ["GET"],
-        path: "/health-check"
-    }
-    resource function healthCheck(http:Caller caller, http:Request clientRequest) {
-        http:Response response = new;
-        response.statusCode = 200;
-        response.setTextPayload("Health check passed!");
-        var result = caller->respond(response);
-        if (result is error) {
-           log:printError("Error in responding", result);
+            return response;
+        } else {
+            log:printError("Error at h1c-h1c-passthrough", 'error = response);
+            http:InternalServerError internalServerError = {
+                body: response.message()
+            };
+            return internalServerError;
         }
     }
+
+    resource function get healthcheck() returns http:Ok {
+        http:Ok Ok = {
+            body: "Health check passed!"
+        };
+        return Ok;
+    }
 }
-function test (http:Response res) returns @untainted http:Response {
-    return res;
-} 
