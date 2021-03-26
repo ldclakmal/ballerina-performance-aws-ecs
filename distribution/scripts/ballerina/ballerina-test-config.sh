@@ -32,19 +32,6 @@ declare -A test_scenario0=(
     [netty_options]=""
     [skip]=false
 )
-declare -A test_scenario1=(
-    [name]="h1c_transformation"
-    [display_name]="JSON to XML transformation HTTP service"
-    [description]="An HTTP Service, which transforms JSON requests to XML and then forwards all requests to an HTTP back-end service."
-    [bal]="h1c_transformation.jar"
-    [bal_flags]=""
-    [path]="/transform"
-    [jmx]="http-post-request.jmx"
-    [protocol]="http"
-    [port]="9090"
-    [netty_options]=""
-    [skip]=false
-)
 
 function before_execute_test_scenario() {
     local bal_file=${scenario[bal]}
