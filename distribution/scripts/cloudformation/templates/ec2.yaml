@@ -113,6 +113,10 @@
           - c4.2xlarge
           - c4.4xlarge
           - c4.8xlarge
+          - c5.large
+          - c5.xlarge
+          - c5.2xlarge
+          - c5.4xlarge
           - g2.2xlarge
           - g2.8xlarge
           - r3.large
