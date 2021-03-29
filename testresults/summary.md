@@ -5,7 +5,6 @@ During each release, we execute various automated performance test scenarios and
 | Test Scenarios | Description |
 | --- | --- |
 | Passthrough HTTP service (h1c -> h1c) | An HTTP Service, which forwards all requests to an HTTP back-end service. |
-| JSON to XML transformation HTTP service | An HTTP Service, which transforms JSON requests to XML and then forwards all requests to an HTTP back-end service. |
 
 Our test client is [Apache JMeter](https://jmeter.apache.org/index.html). We test each scenario for a fixed duration of
 time. We split the test results into warmup and measurement parts and use the measurement part to compute the
@@ -55,7 +54,4 @@ The following is the summary of performance test results collected for the measu
 
 |  Scenario Name | Heap Size | Concurrent Users | Message Size (Bytes) | Back-end Service Delay (ms) | Label | # Samples | Error Count | Error % | Throughput (Requests/sec) | Average Response Time (ms) | Average Users in the System | Standard Deviation of Response Time (ms) | Minimum Response Time (ms) | 75th Percentile of Response Time (ms) | 90th Percentile of Response Time (ms) | 95th Percentile of Response Time (ms) | 98th Percentile of Response Time (ms) | 99th Percentile of Response Time (ms) | 99.9th Percentile of Response Time (ms) | Received (KB/sec) | Sent (KB/sec) |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 100_users | 50B | No | HTTP Request | 3714276 | 0 | 0 | 6191.32 | 16.1 | 99 | 3.47 | 1 | 18 | 21 | 22 | 24 | 26 | 28 | 1070.18 | 1402.72 |
-|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 100_users | 100B | No | HTTP Request | 3673563 | 0 | 0 | 6123.13 | 16.28 | 99 | 3.65 | 1 | 18 | 21 | 23 | 25 | 26 | 30 | 1363.35 | 1692.23 |
-|  JSON to XML transformation HTTP service | 2G_heap | 100_users | 50B | No | HTTP Request | 6000 | 6000 | 100 | 9.99 | 10016 | 100 | 0 | 10000 | 10047 | 10047 | 10047 | 10047 | 10047 | 10047 | 26.05 | 0 |
-|  JSON to XML transformation HTTP service | 2G_heap | 100_users | 100B | No | HTTP Request | 5992 | 5992 | 100 | 9.83 | 10016 | 98 | 0 | 10001 | 10047 | 10047 | 10047 | 10047 | 10047 | 10047 | 25.63 | 0 |
+|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 100_users | 50B | No | HTTP Request | 5732308 | 0 | 0 | 9554.32 | 10.41 | 99 | 2.31 | 0 | 12 | 14 | 15 | 16 | 17 | 19 | 1651.48 | 2155.32 |
