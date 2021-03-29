@@ -43,7 +43,7 @@ and set the output format to `text`.
 git clone https://github.com/ldclakmal/ballerina-performance-aws-ecs.git
 ```
 
-2. Change directory to `ballerina-performance-aws-ecs/distribution/scripts/cloudformation` and copy the ballerina-performance-ecs.pem file to that directory.
+2. Change directory to `/../ballerina-performance-aws-ecs/distribution/scripts/cloudformation` and copy the ballerina-performance-ecs.pem file to that directory.
 
 3. Change the path of `ballerina-performance-aws-ecs` file in the `ec2-cfn.sh` file
 
@@ -52,14 +52,14 @@ git clone https://github.com/ldclakmal/ballerina-performance-aws-ecs.git
 ```
 --parameters \
 ParameterKey=KeyName,ParameterValue=ballerina-performance-ecs \
-ParameterKey=InstanceType,ParameterValue=m4.10xlarge \
+ParameterKey=InstanceType,ParameterValue=c5.xlarge \
 ParameterKey=BallerinaMemory,ParameterValue=8192 \
 ParameterKey=BallerinaCPU,ParameterValue=4096 \
 ParameterKey=GitHubRepoBranch,ParameterValue=master \
 ParameterKey=JMeterOptions,ParameterValue="-m 2G -u 100 -b 50 -b 100" \
 ParameterKey=UserEmail,ParameterValue=user@example.com \
-ParameterKey=BallerinaVersion,ParameterValue=swan-lake-preview7 \
---capabilities CAPABILITY_IAM --tags Key=User,Value=shamith@wso2.co
+ParameterKey=BallerinaVersion,ParameterValue=swan-lake-alpha3 \
+--capabilities CAPABILITY_IAM --tags Key=User,Value=user@wso2.com
 ```
 
 You can change values of the JMeterOptions ParameterKey as below examples.
@@ -95,52 +95,45 @@ Usage of JMeterOptions:
 -h: Display this help and exit.
 ```
 
-5. In the current directory ( `ballerina-performance-aws-ecs/distribution/scripts/cloudformation` ) use `sh ./ec2-cfn.sh` to run tests. 
+5. In the current directory ( `/../ballerina-performance-aws-ecs/distribution/scripts/cloudformation` ) use `sh ./ec2-cfn.sh` to run tests. 
 
 ```
 sh ./ec2-cfn.sh
 ```
 
-6. If you are going to log in to the EC2 instance that created by `ec2-cfn.sh` first time, give yes for the following question in the terminal.
+6. If you are going to log in to the EC2 instance which is created by `ec2-cfn.sh` first time, give yes for the following question in the terminal.
 
 ```
 {
-    "StackId": "arn:aws:cloudformation:us-east-2:134633749276:stack/teststack/96aa6170-8656-11eb-a287-0a66227d48ea"
+    "StackId": "arn:aws:cloudformation:us-east-2:134633749276:stack/ec2-stack/37bb8f30-9034-11eb-8239-06f2546a4124"
 }
-EC2 instance is creating...
-####To take the log output, enter the following command after entering the EC2 instance.###
-tail -f /var/log/cloud-init-output.log
-The authenticity of host 'ec2-3-133-135-239.us-east-2.compute.amazonaws.com (3.133.135.239)' can't be established.
-ECDSA key fingerprint is SHA256:1v9HWWPJceIx4kxh7Zw4ntQkCnpvYUS1FyrIuuZm/Ps.
+Pseudo-terminal will not be allocated because stdin is not a terminal.
+The authenticity of host 'ec2-3-135-215-193.us-east-2.compute.amazonaws.com (3.135.215.193)' can't be established.
+ECDSA key fingerprint is SHA256:6nLGsDczrl4YniGcjk1wCf4B7+xhWqDBaYv/yLS7b/M.
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 ```
-After logging into the EC2 instance run `tail -f /var/log/cloud-init-output.log` command to take log output.
 
 7. After completing the test, end of the terminal gives output as below according to your test.
 
 ```
+Actual execution times:
 Scenario                                        Combination(s)                                         Actual Time
-h1c_transformation                                           2                       30 minute(s) and 28 second(s)
-h1c-h1c-passthrough                                          2                       30 minute(s) and 36 second(s)
-                                   Total                     4            1 hour(s), 01 minute(s) and 04 second(s)
-Script execution time: 1 hour(s), 23 minute(s) and 44 second(s)
-Cloud-init v. 20.2-45-g5f7825e2-0ubuntu1~18.04.1 running 'modules:final' at Thu, 18 Mar 2021 19:51:47 +0000. Up 27.92 seconds.
-Cloud-init v. 20.2-45-g5f7825e2-0ubuntu1~18.04.1 finished at Thu, 18 Mar 2021 21:21:07 +0000. Datasource DataSourceEc2Local.  Up 5388.14 seconds
+h1c-h1c-passthrough                                          2                       30 minute(s) and 27 second(s)
+                                   Total                     2                       30 minute(s) and 27 second(s)
+Script execution time: 41 minute(s) and 52 second(s)
+Cloud-init v. 20.2-45-g5f7825e2-0ubuntu1~18.04.1 running 'modules:final' at Mon, 29 Mar 2021 02:21:12 +0000. Up 19.83 seconds.
+Cloud-init v. 20.2-45-g5f7825e2-0ubuntu1~18.04.1 finished at Mon, 29 Mar 2021 03:07:03 +0000. Datasource DataSourceEc2Local.  Up 2770.40 seconds.
 ```
-8. After that push the results to the git repository. For that change directory to `ballerina-performance-aws-ecs` and run `sudo git push `in the EC2 instance terminal. 
 
-9. Finally delete the ec2-stack by running `aws cloudformation delete-stack --stack-name ec2-stack`.
+8. Come back to local machine terminal and check whether the cloudformation stacks are deleted cpmpletely.
 
 ## Notes
 
-- This test build only for h1c-h1c passthrough and h1c_transform test scenarios.
-- And aslo this test is suitable for ballerina-swan-lake-preview7. To do this test for other version, only needed to update the bal files (` ballerina-performance-aws-ecs/distribution/scripts/ballerina/tests `).
+- This test build only for h1c-h1c passthrough.
 - Before changing the BallerinaMemory and BallerinaCPU values refer [this](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html)
 
 ## Implementation
 
-- Add bot to push the results for the git repository.
-- Update bal files in latest ballerina version. In alpha versions, You have to change `ballerina` command to `bal` command.
 - Add other test scenarios. (In HTTPS tests, You have to change the Healthcheck protocols in ecs-stack)
 - Run task in the cluster for particular test scenario without creating whole cluster from the bottom.
 - Multiply the jmeter clients.
