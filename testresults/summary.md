@@ -29,7 +29,7 @@ The following are the test parameters.
 | --- | --- | --- |
 | Scenario Name | The name of the test scenario. | Refer to the above table. |
 | Heap Size | The amount of memory allocated to the application | 2G |
-| Concurrent Users | The number of users accessing the application at the same time. | 100 |
+| Concurrent Users | The number of users accessing the application at the same time. | 50, 100 |
 | Message Size (Bytes) | The request payload size in Bytes. |  |
 | Back-end Delay (ms) | The delay added by the back-end service. |  |
 
@@ -54,4 +54,7 @@ The following is the summary of performance test results collected for the measu
 
 |  Scenario Name | Heap Size | Concurrent Users | Message Size (Bytes) | Back-end Service Delay (ms) | Label | # Samples | Error Count | Error % | Throughput (Requests/sec) | Average Response Time (ms) | Average Users in the System | Standard Deviation of Response Time (ms) | Minimum Response Time (ms) | 75th Percentile of Response Time (ms) | 90th Percentile of Response Time (ms) | 95th Percentile of Response Time (ms) | 98th Percentile of Response Time (ms) | 99th Percentile of Response Time (ms) | 99.9th Percentile of Response Time (ms) | Received (KB/sec) | Sent (KB/sec) |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 100_users | 50B | No | HTTP Request | 5732308 | 0 | 0 | 9554.32 | 10.41 | 99 | 2.31 | 0 | 12 | 14 | 15 | 16 | 17 | 19 | 1651.48 | 2155.32 |
+|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 50_users | 50B | No | HTTP Request | 3642896 | 0 | 0 | 6071.98 | 8.21 | 49 | 2.22 | 1 | 9 | 11 | 12 | 14 | 15 | 17 | 1049.55 | 1369.75 |
+|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 50_users | 1024B | No | HTTP Request | 3679257 | 0 | 0 | 6132.67 | 8.12 | 49 | 1.95 | 1 | 9 | 11 | 12 | 13 | 14 | 16 | 6905.24 | 7228.64 |
+|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 100_users | 50B | No | HTTP Request | 3582986 | 0 | 0 | 5971.95 | 16.71 | 99 | 4.1 | 1 | 19 | 22 | 24 | 27 | 28 | 31 | 1032.26 | 1347.19 |
+|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 100_users | 1024B | No | HTTP Request | 3633040 | 0 | 0 | 6055.25 | 16.48 | 99 | 3.84 | 1 | 19 | 22 | 23 | 25 | 27 | 30 | 6818.07 | 7137.39 |
