@@ -69,3 +69,7 @@ git add summary.md
 git add summary.csv
 git commit -m "Update performance results"
 git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/SmithAbey/ballerina-performance-aws-ecs.git --all
+
+# Delete test stack and end the test
+aws cloudformation delete-stack --stack-name ec2-stack
+echo "Completed the ballerina performane aws ecs tests"

@@ -35,14 +35,10 @@ ParameterKey=UserEmail,ParameterValue=shamith@wso2.com \
 ParameterKey=BallerinaVersion,ParameterValue=swan-lake-alpha3 \
 --capabilities CAPABILITY_IAM --tags Key=User,Value=shamith@wso2.com
 
-# Wait until EC2 instance creation
+# Wait until EC2 stack creation
 aws cloudformation wait stack-create-complete --stack-name ec2-stack
 
 # Connect to the EC2 instance
 chmod 400 ballerina-performance-ecs.pem
 ec2_public_dns=$(aws ec2 describe-instances --query 'Reservations[*].Instances[].PublicDnsName |[-1]' --output text)
 echo "tail -f /var/log/cloud-init-output.log" | ssh -i "ballerina-performance-ecs.pem" $ec2_public_dns -l ubuntu
-
-# Delete test stack and end the test
-aws cloudformation delete-stack --stack-name ec2-stack
-echo "Completed the ballerina performane aws ecs tests"
