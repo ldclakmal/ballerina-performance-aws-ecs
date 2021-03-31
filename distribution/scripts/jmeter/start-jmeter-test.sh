@@ -264,13 +264,19 @@ function initialize_test() {
 
     local test_parameters_json='.'
     test_parameters_json+=' | .["test_duration"]=$test_duration'
+    test_parameters_json+=' | .["bal_version"]=$bal_version'
+    test_parameters_json+=' | .["memory"]=$memory'
+    test_parameters_json+=' | .["cpu"]=$cpu'
     test_parameters_json+=' | .["warmup_time"]=$warmup_time'
     test_parameters_json+=' | .["jmeter_client_heap_size"]=$jmeter_client_heap_size'
     test_parameters_json+=' | .["netty_service_heap_size"]=$netty_service_heap_size'
     test_parameters_json+=' | .["test_scenarios"]=$test_scenarios'
-    test_parameters_json+=' | .["heap_sizes"]=$heap_sizes | .["concurrent_users"]=$concurrent_users'
+    test_parameters_json+=' | .["heap_sizes"]=$heap_sizes | .["concurrent_users"]=$concurrent_users | .["message_sizes"]=$message_sizes'
     jq -n \
         --arg test_duration "$test_duration" \
+        --arg bal_version "$BALLERINA_VERSION" \
+        --arg memory "$BALLERINA_MEMORY" \
+        --arg cpu "$BALLERINA_CPU" \
         --arg warmup_time "$warmup_time" \
         --arg jmeter_client_heap_size "$jmeter_client_heap_size" \
         --arg netty_service_heap_size "$netty_service_heap_size" \
@@ -341,17 +347,18 @@ function test_scenarios() {
             $SCRIPTS_DIR/netty/make-netty-image.sh $scenario_flags
             $SCRIPTS_DIR/ballerina/make-ballerina-image.sh -t $scenario_name
 
-            # Create ECS cluster
+            # Create ECS stack
             $SCRIPTS_DIR/cloudformation/ecs-cfn.sh -t $scenario_name
 
-            # Take Ballerina task IP
+            # Wait until ECS stack creation
             aws cloudformation wait stack-create-complete --stack-name ecs-stack
 
+            # Take Ballerina task IP
             taskid=$(aws ecs list-tasks --cluster ballerina-performance-test --service-name ballerina-service --query ["taskArns"][0][0] --output text)
             hostname=$(aws ecs describe-tasks --cluster ballerina-performance-test --tasks $taskid --query 'tasks[*].attachments[].details[].value | [4]' --output text)
         
             if [[ -z $hostname ]]; then
-                echo "Did not assign any ipv4 address for ballerina proxy."
+                echo "IPv4 address is not assigned for Ballerina task."
                 exit 1
             fi
             
@@ -381,7 +388,6 @@ function test_scenarios() {
                     before_execute_test_scenario
 
                     export JVM_ARGS="-Xms$jmeter_client_heap_size -Xmx$jmeter_client_heap_size -XX:+PrintGC -XX:+PrintGCDetails -Xloggc:$report_location/jmeter_gc.log"
-                    # Copy jmx file to the jmeter bin folder
                     local jmeter_command="jmeter -n -t $SCRIPTS_DIR/jmeter/${jmx_file} -j $report_location/jmeter.log $jmeter_remote_args"
 
                     for param in ${jmeter_params[@]}; do
@@ -395,15 +401,15 @@ function test_scenarios() {
                     # Start timestamp
                     test_start_timestamp=$(date +%s)
                     echo "Start timestamp: $test_start_timestamp"
+                    
                     # Run JMeter in background
-                    var_path1=`pwd`
                     cd /home/ubuntu/jmeter/apache-jmeter-5.3/bin
                     sh $jmeter_command &
                     local jmeter_pid="$!"
                     if ! wait $jmeter_pid; then
                         echo "WARNING: JMeter execution failed."
                     fi
-                    cd $var_path1
+                    cd $HOME_DIR
                     
                     # End timestamp
                     test_end_timestamp="$(date +%s)"
