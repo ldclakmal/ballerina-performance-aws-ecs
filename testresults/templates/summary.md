@@ -1,4 +1,5 @@
 # Ballerina Performance Test Results
+**Ballerina Version: {{ parameters.bal_version }}**
 
 During each release, we execute various automated performance test scenarios and publish the results.
 
@@ -33,12 +34,14 @@ The following are the test parameters.
 | Heap Size | The amount of memory allocated to the application | {{ parameters.heap_sizes|join(', ') }} |
 | Concurrent Users | The number of users accessing the application at the same time. | {{ parameters.concurrent_users|join(', ') }} |
 | Message Size (Bytes) | The request payload size in Bytes. | {{ parameters.message_sizes|join(', ') }} |
-| Back-end Delay (ms) | The delay added by the back-end service. | {{ parameters.backend_sleep_times|join(', ') }} |
+| Back-end Delay (ms) | The delay added by the back-end service. | 0 |
 
 The duration of each test is **{{ parameters.test_duration }} seconds**. The warm-up period is **{{ parameters.warmup_time }} seconds**.
 The measurement results are collected after the warm-up period.
 
-The specific memory and cpu values(https://docs.amazonaws.cn/en_us/AmazonECS/latest/APIReference/API_TaskDefinition.html) were used to install Ballerina.
+Ballerina Test CPU: **{{ parameters.cpu }}** .
+
+Ballerina Test Memory(MB): **{{ parameters.memory }}** .
 
 The following are the measurements collected from each performance test conducted for a given combination of
 test parameters.
