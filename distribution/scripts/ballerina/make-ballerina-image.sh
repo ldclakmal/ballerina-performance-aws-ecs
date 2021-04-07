@@ -55,7 +55,8 @@ cd $BALLERINA_DOCKER_DIR
 
 cp $SCRIPTS_DIR/ballerina/start-ballerina-test.sh .
 cp $SCRIPTS_DIR/ballerina/tests/$test_name/* .
-bal build $test_name.bal
+rm -rf ~/.ballerina
+bal build --offline $test_name.bal
 
 touch Dockerfile
 
