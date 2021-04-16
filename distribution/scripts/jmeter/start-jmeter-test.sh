@@ -342,13 +342,14 @@ function test_scenarios() {
 
             export scenario_name=${scenario[name]}
             export scenario_flags=${scenario[netty_options]}
+            export scenario_protocol=${scenario[healthcheck_protocol]}
             
             # Create Docker images and push to ECR
             $SCRIPTS_DIR/netty/make-netty-image.sh $scenario_flags
             $SCRIPTS_DIR/ballerina/make-ballerina-image.sh -t $scenario_name
 
             # Create ECS stack
-            $SCRIPTS_DIR/cloudformation/ecs-cfn.sh -t $scenario_name
+            $SCRIPTS_DIR/cloudformation/ecs-cfn.sh -t $scenario_name -i $scenario_protocol
 
             # Wait until ECS stack creation
             aws cloudformation wait stack-create-complete --stack-name ecs-stack
