@@ -69,3 +69,5 @@ git add summary.md
 git add summary.csv
 git commit -m "Update performance results"
 git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/SmithAbey/ballerina-performance-aws-ecs.git --all
+
+echo "Finished the ballerina performane aws ecs test"
