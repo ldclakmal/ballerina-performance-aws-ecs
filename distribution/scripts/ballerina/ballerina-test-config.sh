@@ -28,8 +28,24 @@ declare -A test_scenario0=(
     [path]="/passthrough"
     [jmx]="http-post-request.jmx"
     [protocol]="http"
+    [healthcheck_protocol]="HTTP"
     [port]="9090"
     [netty_options]=""
+    [skip]=false
+)
+
+declare -A test_scenario1=(
+    [name]="h1_h1_passthrough"
+    [display_name]="Passthrough HTTPS service (h1 -> h1)"
+    [description]="An HTTPS Service, which forwards all requests to an HTTPS back-end service."
+    [bal]="h1_h1_passthrough.jar"
+    [bal_flags]=""
+    [path]="/passthrough"
+    [jmx]="http-post-request.jmx"
+    [protocol]="https"
+    [healthcheck_protocol]="HTTPS"
+    [port]="9090"
+    [netty_options]="true"
     [skip]=false
 )
 
