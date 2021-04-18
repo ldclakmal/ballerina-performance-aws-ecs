@@ -39,9 +39,9 @@ The following are the test parameters.
 The duration of each test is **{{ parameters.test_duration }} seconds**. The warm-up period is **{{ parameters.warmup_time }} seconds**.
 The measurement results are collected after the warm-up period.
 
-Ballerina Test CPU: **{{ parameters.cpu }}** .
+Ballerina Test CPU: **{{ parameters.cpu }} MB**
 
-Ballerina Test Memory(MB): **{{ parameters.memory }}** .
+Ballerina Test Memory: **{{ parameters.memory }} MB**
 
 The following are the measurements collected from each performance test conducted for a given combination of
 test parameters.
