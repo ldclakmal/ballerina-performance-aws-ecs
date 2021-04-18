@@ -1,10 +1,12 @@
 # Ballerina Performance Test Results
+**Ballerina Version: swan-lake-alpha4**
 
 During each release, we execute various automated performance test scenarios and publish the results.
 
 | Test Scenarios | Description |
 | --- | --- |
 | Passthrough HTTP service (h1c -> h1c) | An HTTP Service, which forwards all requests to an HTTP back-end service. |
+| Passthrough HTTPS service (h1 -> h1) | An HTTPS Service, which forwards all requests to an HTTPS back-end service. |
 
 Our test client is [Apache JMeter](https://jmeter.apache.org/index.html). We test each scenario for a fixed duration of
 time. We split the test results into warmup and measurement parts and use the measurement part to compute the
@@ -29,14 +31,16 @@ The following are the test parameters.
 | --- | --- | --- |
 | Scenario Name | The name of the test scenario. | Refer to the above table. |
 | Heap Size | The amount of memory allocated to the application | 2G |
-| Concurrent Users | The number of users accessing the application at the same time. | 50, 100 |
-| Message Size (Bytes) | The request payload size in Bytes. |  |
-| Back-end Delay (ms) | The delay added by the back-end service. |  |
+| Concurrent Users | The number of users accessing the application at the same time. | 50 |
+| Message Size (Bytes) | The request payload size in Bytes. | 50 |
+| Back-end Delay (ms) | The delay added by the back-end service. | 0 |
 
 The duration of each test is **900 seconds**. The warm-up period is **300 seconds**.
 The measurement results are collected after the warm-up period.
 
-The specific memory and cpu values(https://docs.amazonaws.cn/en_us/AmazonECS/latest/APIReference/API_TaskDefinition.html) were used to install Ballerina.
+Ballerina Test CPU: **4096 MB**
+
+Ballerina Test Memory: **8192 MB**
 
 The following are the measurements collected from each performance test conducted for a given combination of
 test parameters.
@@ -54,7 +58,5 @@ The following is the summary of performance test results collected for the measu
 
 |  Scenario Name | Heap Size | Concurrent Users | Message Size (Bytes) | Back-end Service Delay (ms) | Label | # Samples | Error Count | Error % | Throughput (Requests/sec) | Average Response Time (ms) | Average Users in the System | Standard Deviation of Response Time (ms) | Minimum Response Time (ms) | 75th Percentile of Response Time (ms) | 90th Percentile of Response Time (ms) | 95th Percentile of Response Time (ms) | 98th Percentile of Response Time (ms) | 99th Percentile of Response Time (ms) | 99.9th Percentile of Response Time (ms) | Received (KB/sec) | Sent (KB/sec) |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 50_users | 50B | No | HTTP Request | 3642896 | 0 | 0 | 6071.98 | 8.21 | 49 | 2.22 | 1 | 9 | 11 | 12 | 14 | 15 | 17 | 1049.55 | 1369.75 |
-|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 50_users | 1024B | No | HTTP Request | 3679257 | 0 | 0 | 6132.67 | 8.12 | 49 | 1.95 | 1 | 9 | 11 | 12 | 13 | 14 | 16 | 6905.24 | 7228.64 |
-|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 100_users | 50B | No | HTTP Request | 3582986 | 0 | 0 | 5971.95 | 16.71 | 99 | 4.1 | 1 | 19 | 22 | 24 | 27 | 28 | 31 | 1032.26 | 1347.19 |
-|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 100_users | 1024B | No | HTTP Request | 3633040 | 0 | 0 | 6055.25 | 16.48 | 99 | 3.84 | 1 | 19 | 22 | 23 | 25 | 27 | 30 | 6818.07 | 7137.39 |
+|  Passthrough HTTP service (h1c -> h1c) | 2G_heap | 50_users | 50B | No | HTTP Request | 3833878 | 0 | 0 | 6390.41 | 7.8 | 49 | 2.15 | 1 | 9 | 11 | 12 | 13 | 14 | 16 | 1104.59 | 1447.83 |
+|  Passthrough HTTPS service (h1 -> h1) | 2G_heap | 50_users | 50B | No | HTTP Request | 3228243 | 0 | 0 | 5380.89 | 9.26 | 49 | 2.58 | 1 | 11 | 13 | 14 | 16 | 17 | 23 | 930.1 | 1219.11 |
