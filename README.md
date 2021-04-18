@@ -1,29 +1,16 @@
 # Ballerina Performance Tests on Amazon ECS
 
-Ballerina performance artifacts are used to continuously test the performance of Ballerina services.
+Ballerina performance artifacts are used to continuously test the performance of Ballerina language versions.
 
 These performance test scripts make use of Apache JMeter and a simple Netty Backend Service, which can echo back any 
 requests and also add a configurable delay to the response.
 
 In order to support a large number of concurrent users, two or more JMeter Servers can be used.
 
-Using Amazon Cloudformation, an EC2(Amazon Elastic Compute Cloud) stack which acts as a local machine and an ECS (Amazon Elastic Container Service) stack compromising of a Netty server and Ballerina service are created.
+Use AWS Cloudformation, AWS EC2 (Amazon Elastic Compute Cloud) which acts as a local machine and AWS ECS (Amazon Elastic Container Service) for Netty echo server and Ballerina service.
 
 To fully automate the performance tests on amazon ECS, an AWS CloudFormation template is used to create a deployment of an EC2 
 instance and an ECS cluster compromising a Ballerina and a Netty Backend Service.
-
-## About Ballerina
-
-Ballerina makes it easy to write microservices that integrate APIs.
-
-#### Integration Syntax
-A compiled, transactional, statically and strongly typed programming language with textual and graphical syntaxes. Ballerina incorporates fundamental concepts of distributed system integration and offers a type safe, concurrent environment to implement microservices.
-
-#### Networked Type System
-A type system that embraces network payload variability with primitive, object, union, and tuple types.
-
-#### Concurrency
-An execution model composed of lightweight parallel worker units that are non-blocking where no function can lock an executing thread manifesting sequence concurrency.
 
 ## Run Ballerina Performance Tests on Amazon ECS
 
@@ -31,9 +18,9 @@ You can run Ballerina Performance Tests from the source using the following inst
 
 ### Prerequisites
 
-* [AWS CLI](https://aws.amazon.com/cli/) - Please make sure to [configure the AWS Cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
+* [AWS CLI](https://aws.amazon.com/cli/) - Please make sure to [configure the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
 and set the output format to `text`.
-* ballerina-performance-ecs.pem key file.
+* File of an existing EC2 KeyPair to enable SSH access to the instance.
 
 #### Steps to run performance tests.
 
@@ -43,43 +30,51 @@ and set the output format to `text`.
 git clone https://github.com/ldclakmal/ballerina-performance-aws-ecs.git
 ```
 
-2. Change directory to `/../ballerina-performance-aws-ecs/distribution/scripts/cloudformation` and copy the ballerina-performance-ecs.pem file to that directory.
+2. Change directory to `/../ballerina-performance-aws-ecs/distribution/scripts/cloudformation` and copy the key pair file to that directory.
 
-3. Change the path of `ballerina-performance-aws-ecs` file in the `ec2-cfn.sh` file
-
-4. Change values of ParameterValue according to the ParameterKey in the `ec2-cfn.sh` file as required for the test.
+3. Run the following command to make ec2-cfn.sh executable.
 
 ```
---parameters \
-ParameterKey=KeyName,ParameterValue=ballerina-performance-ecs \
-ParameterKey=InstanceType,ParameterValue=c5.xlarge \
-ParameterKey=BallerinaMemory,ParameterValue=8192 \
-ParameterKey=BallerinaCPU,ParameterValue=4096 \
-ParameterKey=GitHubRepoBranch,ParameterValue=master \
-ParameterKey=JMeterOptions,ParameterValue="-m 2G -u 100 -b 50 -b 100" \
-ParameterKey=UserEmail,ParameterValue=user@example.com \
-ParameterKey=BallerinaVersion,ParameterValue=swan-lake-alpha3 \
---capabilities CAPABILITY_IAM --tags Key=User,Value=user@wso2.com
+chmod +x ec2-cfn.sh
 ```
 
-You can change values of the JMeterOptions ParameterKey as below examples.
+4. In the current directory ( `/../ballerina-performance-aws-ecs/distribution/scripts/cloudformation` ) use following command to run tests. Make sure to change the values of the parameters according to your preferences.
+
+```
+./ec2-cfn.sh -c /home/shamith/Documents/Upgrade/ec2.yaml -f key-pair-name -g c5.xlarge -j 8192 -n 4096 -p test-branch -r "-m 2G -u 50 -b 50" -s user@example.com -k swan-lake-alpha4 -y user@example.com -x SmithAbey -v #####
+```
+Usage of above command: 
+
+```
+-c: Location of the ec2 cloudformation template.
+-f: Name of an existing EC2 KeyPair to enable SSH access to the instance.
+-g: WebServer EC2 instance type.
+-j: Memory Constraint for the test.
+-n: CPU Constraint for the test.
+-p: Branch of the github repo of the ballerina performance tests.
+-x: Username of GitHub account.
+-v: Password of GitHub account.
+-r: Options for JMeter. You should give the jmeter options in the inverted comma.
+-s: Email address of the user creating this stack.
+-k: Version for the Ballerina deb file.
+-y: Value of the IAM user.
+-h: Display this help and exit.
+```
+
+5. You can change values of the JMeterOptions Parameter as below examples. You should provide Jmeter options values in the inverted commas.
 
 To do the test for two message sizes.
 ```
-"-m 2G -u 100 -b 50 -b 100"
+-r "-m 2G -u 100 -b 50 -b 100"
 ```
 To do the test for two message sizes and two concurrent users.
 ```
-"-m 2G -u 100 -u 150 -b 50 -b 100"
+-r "-m 2G -u 100 -u 150 -b 50 -b 100"
 ```
 
 Usage of JMeterOptions: 
 
 ```
-   [-u <concurrent_users>] [-b <message_sizes>] [-m <heap_sizes>] [-d <test_duration>] [-w <warmup_time>]
-   [-j <jmeter_server_heap_size>] [-k <jmeter_client_heap_size>] [-l <netty_service_heap_size>]
-   [-i <include_scenario_name>] [-e <exclude_scenario_name>] [-t] [-p <estimated_processing_time_in_between_tests>] [-h]
-
 -u: Concurrent Users to test. Multiple users must be separated by spaces. Default "50 100 150 500 1000".
 -b: Message sizes in bytes. Multiple message sizes must be separated by spaces. Default "50 1024 10240".
 -m: Application heap memory sizes. Multiple heap memory sizes must be separated by spaces. Default "2g".
@@ -95,48 +90,28 @@ Usage of JMeterOptions:
 -h: Display this help and exit.
 ```
 
-5. In the current directory ( `/../ballerina-performance-aws-ecs/distribution/scripts/cloudformation` ) use `sh ./ec2-cfn.sh` to run tests. 
+6. After completing the test, end of the terminal gives output as below.
 
 ```
-sh ./ec2-cfn.sh
-```
-
-6. If you are going to log in to the EC2 instance which is created by `ec2-cfn.sh` first time, give yes for the following question in the terminal.
-
-```
-{
-    "StackId": "arn:aws:cloudformation:us-east-2:134633749276:stack/ec2-stack/37bb8f30-9034-11eb-8239-06f2546a4124"
-}
-Pseudo-terminal will not be allocated because stdin is not a terminal.
-The authenticity of host 'ec2-3-135-215-193.us-east-2.compute.amazonaws.com (3.135.215.193)' can't be established.
-ECDSA key fingerprint is SHA256:6nLGsDczrl4YniGcjk1wCf4B7+xhWqDBaYv/yLS7b/M.
-Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-```
-
-7. After completing the test, end of the terminal gives output as below according to your test.
+Finished the ballerina performane aws ecs test
+EC2 instance is deleting...
+Completed the ballerina performane aws ecs test
 
 ```
-Actual execution times:
-Scenario                                        Combination(s)                                         Actual Time
-h1c-h1c-passthrough                                          2                       30 minute(s) and 27 second(s)
-                                   Total                     2                       30 minute(s) and 27 second(s)
-Script execution time: 41 minute(s) and 52 second(s)
-Cloud-init v. 20.2-45-g5f7825e2-0ubuntu1~18.04.1 running 'modules:final' at Mon, 29 Mar 2021 02:21:12 +0000. Up 19.83 seconds.
-Cloud-init v. 20.2-45-g5f7825e2-0ubuntu1~18.04.1 finished at Mon, 29 Mar 2021 03:07:03 +0000. Datasource DataSourceEc2Local.  Up 2770.40 seconds.
-```
 
-8. Come back to local machine terminal and check whether the cloudformation stacks are deleted cpmpletely.
+7. Check whether the cloudformation stacks are deleted completely. By using following aws cli command you can figure it out all stacks are deleted or not.
+
+```
+aws cloudformation describe-stacks
+```
 
 ## Notes
 
-- This test build only for h1c-h1c passthrough.
 - Before changing the BallerinaMemory and BallerinaCPU values refer [this](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html)
 
 ## Implementation
 
-- Add other test scenarios. (In HTTPS tests, You have to change the Healthcheck protocols in ecs-stack)
-- Run task in the cluster for particular test scenario without creating whole cluster from the bottom.
-- Multiply the jmeter clients.
+- Run task in the cluster for particular test scenario without creating whole cluster from the bottom level.
 
 ## Contributing to Ballerina
 
