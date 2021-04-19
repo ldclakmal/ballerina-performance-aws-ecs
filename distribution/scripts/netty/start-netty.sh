@@ -77,7 +77,7 @@ mkdir -p logs
 echo "Starting Netty"
 if [ $enable_ssl = true ]; then
     nohup java -Xms${heap_size} -Xmx${heap_size} -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$gc_log_file \
-    -jar $jar_name --ssl $enable_ssl --key-store-file /usr/lib/ballerina/distributions/ballerina-slp7/bre/security/ballerinaKeystore.p12 --key-store-password ballerina >netty.out 2>&1
+    -jar $jar_name --ssl $enable_ssl --key-store-file ballerinaKeystore.p12 --key-store-password ballerina >netty.out 2>&1
 else
     nohup java -Xms${heap_size} -Xmx${heap_size} -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$gc_log_file \
     -jar $jar_name >netty.out 2>&1

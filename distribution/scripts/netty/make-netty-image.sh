@@ -27,6 +27,7 @@ cd $NETTY_DOCKER_DIR
 
 cp $GITHUB_REPO_DIR/components/netty-http-echo-service/target/$netty_service_name-$COMPONENTS_VERSION.jar .
 cp $SCRIPTS_DIR/netty/start-netty.sh .
+cp $SCRIPTS_DIR/ballerina/resources/ballerinaKeystore.p12 .
 
 touch Dockerfile
 
@@ -35,6 +36,7 @@ echo "USER root" >> Dockerfile
 echo "RUN apk add openjdk8=8.275.01-r0" >> Dockerfile
 echo "COPY $netty_service_name-$COMPONENTS_VERSION.jar ." >> Dockerfile
 echo "COPY start-netty.sh ." >> Dockerfile
+echo "COPY ballerinaKeystore.p12 ." >> Dockerfile
 echo "ENTRYPOINT ./start-netty.sh -j $netty_service_name-$COMPONENTS_VERSION.jar $netty_flags" >> Dockerfile
 
 cd $HOME_DIR
