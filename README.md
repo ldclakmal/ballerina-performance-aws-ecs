@@ -27,7 +27,7 @@ and set the output format to `text`.
 1. Clone this repository using the following command.
 
 ```
-git clone https://github.com/ldclakmal/ballerina-performance-aws-ecs.git
+git clone https://github.com/ballerina-platform/ballerina-performance-aws-ecs.git
 ```
 
 2. Change directory to `/../ballerina-performance-aws-ecs/distribution/scripts/cloudformation` and copy the key pair file to that directory.
@@ -40,8 +40,10 @@ chmod +x ec2-cfn.sh
 
 4. In the current directory ( `/../ballerina-performance-aws-ecs/distribution/scripts/cloudformation` ) use following command to run tests. Make sure to change the values of the parameters according to your preferences.
 
+If there is "@" in your github username or password, use "%40" instead of "@".
+
 ```
-./ec2-cfn.sh -c /home/shamith/Documents/Upgrade/ec2.yaml -f key-pair-name -g c5.xlarge -j 8192 -n 4096 -p test-branch -r "-m 2G -u 50 -b 50" -s user@example.com -k swan-lake-alpha4 -y user@example.com -x SmithAbey -v #####
+./ec2-cfn.sh -c /home/Documents/Upgrade/ec2.yaml -f key-pair-name -g c5.xlarge -j 8192 -n 4096 -p test-branch -r "-m 2G -u 50 -b 50" -s user@example.com -k swan-lake-alpha4 -y user@example.com -x username -v password
 ```
 Usage of above command: 
 
