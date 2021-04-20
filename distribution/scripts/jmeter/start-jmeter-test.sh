@@ -448,3 +448,4 @@ function test_scenarios() {
 }
 
 test_scenarios
+print_durations
