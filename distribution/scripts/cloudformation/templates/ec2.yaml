@@ -41,12 +41,12 @@ Parameters:
     ConstraintDescription: Must be the name of an existing EC2 KeyPair.
   GitHubRepoURL:
     Type: String
-    Description: URL for the github repo of the ballerina performance tests.
-    ConstraintDescription: Must be the URL of the github repository.
+    Description: URL for the GitHub repo of the Ballerina performance tests.
+    ConstraintDescription: Must be the URL of the GitHub repository.
     Default: "https://github.com/SmithAbey/ballerina-performance-aws-ecs.git"
   GitHubRepoBranch:
     Type: String
-    Description: Branch of the github repo of the ballerina performance tests.
+    Description: Branch of the GitHub repo of the Ballerina performance tests.
     Default: "master"  
   GitUsername:
     Type: String
@@ -59,7 +59,7 @@ Parameters:
   BallerinaVersion:
     Type: String
     Description: Version for the Ballerina deb file.
-    ConstraintDescription: Must be the name of the ballerina deb file version.
+    ConstraintDescription: Must be the name of the Ballerina deb file version.
     Default: "swan-lake-alpha3"
   JMeterOptions:
     Type: String
@@ -381,7 +381,7 @@ Resources:
         - !Ref SecurityGroup
 
   ##########################################################################################
-  # Create EC2 instance to start performance test
+  # Create EC2 instance to start performance tests
   ##########################################################################################
   EC2Instance:
     Type: 'AWS::EC2::Instance'

@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Create a summary report from JMeter results
+# Create a summary report from JMeter results.
 # ----------------------------------------------------------------------------
 
 script_dir=$(dirname "$0")

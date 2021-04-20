@@ -19,7 +19,7 @@
 # Script to run JMeter test inside the Docker image.
 # ----------------------------------------------------------------------------
 
-# Intall jq tools
+# Install jq tools
 echo "y" | apt-get install jq
 # Install zip tools
 echo "y" | apt-get install zip
@@ -175,7 +175,7 @@ if [[ -z $warmup_time ]]; then
 fi
 
 if [[ -z $COMPONENTS_VERSION ]]; then
-    echo "Please provide the version for the performance test."
+    echo "Please provide the version for the performance tests."
     exit 1
 fi
 
@@ -342,7 +342,7 @@ function test_scenarios() {
 
             export scenario_name=${scenario[name]}
             export scenario_flags=${scenario[netty_options]}
-            export scenario_protocol=${scenario[healthcheck_protocol]}
+            export scenario_protocol=${scenario[health_check_protocol]}
             
             # Create Docker images and push to ECR
             $SCRIPTS_DIR/netty/make-netty-image.sh $scenario_flags
@@ -376,7 +376,7 @@ function test_scenarios() {
                     test_counter=$((test_counter + 1))
                     local scenario_desc="Test No: ${test_counter}, Scenario Name: ${scenario_name}, Duration: $test_duration"
                     scenario_desc+=", Concurrent Users ${users}, Msg Size: ${msize}"
-                    echo -n "# Starting the performance test."
+                    echo -n "# Starting the performance tests."
                     echo " $scenario_desc"
 
                     report_location=$PWD/results/${scenario_name}/${heap}_heap/${users}_users/${msize}B
@@ -435,7 +435,7 @@ function test_scenarios() {
                     fi
 
                     local current_execution_duration="$(measure_time $start_time)"
-                    echo -n "# Completed the performance test."
+                    echo -n "# Completed the performance tests."
                     echo " $scenario_desc"
                     echo -e "Test execution time: $(format_time $current_execution_duration)\n"
                     record_scenario_duration $scenario_name $current_execution_duration

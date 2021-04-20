@@ -1,7 +1,6 @@
 # Ballerina Performance Test Results
-**Ballerina Version: {{ parameters.bal_version }}**
 
-During each release, we execute various automated performance test scenarios and publish the results.
+Ballerina Version: **{{ parameters.bal_version }}**
 
 | Test Scenarios | Description |
 | --- | --- |
@@ -13,11 +12,11 @@ Our test client is [Apache JMeter](https://jmeter.apache.org/index.html). We tes
 time. We split the test results into warmup and measurement parts and use the measurement part to compute the
 performance metrics.
 
-A majority of test scenarios use a [Netty](https://netty.io/) based back-end service which echoes back any request
+All the test scenarios use a [Netty](https://netty.io/) based back-end service which echoes back any request
 posted to it after a specified period of time.
 
 We run the performance tests under different numbers of concurrent users, message sizes (payloads) and back-end service
-delays. And also we can change the infrastructure of the ballerina server.
+delays. Also, we can change the infrastructure (CPU and memory) of the Ballerina services.
 
 The main performance metrics:
 
@@ -35,13 +34,11 @@ The following are the test parameters.
 | Concurrent Users | The number of users accessing the application at the same time. | {{ parameters.concurrent_users|join(', ') }} |
 | Message Size (Bytes) | The request payload size in Bytes. | {{ parameters.message_sizes|join(', ') }} |
 | Back-end Delay (ms) | The delay added by the back-end service. | 0 |
+| Ballerina CPU (MB) | The CPU allocation for Ballerina service. | {{ parameters.cpu }} |
+| Ballerina Memory (MB) | The Memory allocation for Ballerina service. | {{ parameters.memory }} |
 
 The duration of each test is **{{ parameters.test_duration }} seconds**. The warm-up period is **{{ parameters.warmup_time }} seconds**.
 The measurement results are collected after the warm-up period.
-
-Ballerina Test CPU: **{{ parameters.cpu }} MB**
-
-Ballerina Test Memory: **{{ parameters.memory }} MB**
 
 The following are the measurements collected from each performance test conducted for a given combination of
 test parameters.

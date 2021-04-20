@@ -16,7 +16,7 @@
 # under the License.
 
 # ----------------------------------------------------------------------------
-# Declaration of tests for JMeter
+# Declaration of test scenarios for JMeter.
 # ----------------------------------------------------------------------------
 
 declare -A test_scenario0=(
@@ -28,7 +28,7 @@ declare -A test_scenario0=(
     [path]="/passthrough"
     [jmx]="http-post-request.jmx"
     [protocol]="http"
-    [healthcheck_protocol]="HTTP"
+    [health_check_protocol]="HTTP"
     [port]="9090"
     [netty_options]=""
     [skip]=false
@@ -43,7 +43,7 @@ declare -A test_scenario1=(
     [path]="/passthrough"
     [jmx]="http-post-request.jmx"
     [protocol]="https"
-    [healthcheck_protocol]="HTTPS"
+    [health_check_protocol]="HTTPS"
     [port]="9090"
     [netty_options]="true"
     [skip]=false

@@ -1,7 +1,6 @@
 # Ballerina Performance Test Results
-**Ballerina Version: swan-lake-alpha4**
 
-During each release, we execute various automated performance test scenarios and publish the results.
+Ballerina Version: **swan-lake-alpha4**
 
 | Test Scenarios | Description |
 | --- | --- |
@@ -12,11 +11,11 @@ Our test client is [Apache JMeter](https://jmeter.apache.org/index.html). We tes
 time. We split the test results into warmup and measurement parts and use the measurement part to compute the
 performance metrics.
 
-A majority of test scenarios use a [Netty](https://netty.io/) based back-end service which echoes back any request
+All the test scenarios use a [Netty](https://netty.io/) based back-end service which echoes back any request
 posted to it after a specified period of time.
 
 We run the performance tests under different numbers of concurrent users, message sizes (payloads) and back-end service
-delays. And also we can change the infrastructure of the ballerina server.
+delays. Also, we can change the infrastructure (CPU and memory) of the Ballerina services.
 
 The main performance metrics:
 
@@ -34,13 +33,11 @@ The following are the test parameters.
 | Concurrent Users | The number of users accessing the application at the same time. | 100, 300, 1000 |
 | Message Size (Bytes) | The request payload size in Bytes. | 50, 1024 |
 | Back-end Delay (ms) | The delay added by the back-end service. | 0 |
+| Ballerina CPU (MB) | The CPU allocation for Ballerina service. | 4096 |
+| Ballerina Memory (MB) | The Memory allocation for Ballerina service. | 8192 |
 
 The duration of each test is **900 seconds**. The warm-up period is **300 seconds**.
 The measurement results are collected after the warm-up period.
-
-Ballerina Test CPU: **4096 MB**
-
-Ballerina Test Memory: **8192 MB**
 
 The following are the measurements collected from each performance test conducted for a given combination of
 test parameters.

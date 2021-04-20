@@ -17,7 +17,7 @@
 # under the License.
 #
 # ----------------------------------------------------------------------------
-# Create performance test results summary markdown file
+# Create performance test results summary markdown file.
 # ----------------------------------------------------------------------------
 
 import argparse

@@ -14,18 +14,16 @@
 # limitations under the License.
 
 # ----------------------------------------------------------------------------
-# Start the ballerina performance test
+# Start the Ballerina performance tests by creating ECS instance.
 # ----------------------------------------------------------------------------
-# Create the EC2 instance 
 
 # User inputs
-
 template_location=""
 key_pair_name="ballerina-performance-ecs-new"
 instance_type="c5.xlarge"
 ballerina_memory="8192"
 ballerina_cpu="4096"
-githubrepo_branch="master"
+github_repo_branch="master"
 jmeter_options=""
 user_email=""
 ballerina_version="swan-lake-alpha4"
@@ -41,7 +39,7 @@ function usage() {
     echo "-g: WebServer EC2 instance type."
     echo "-j: Memory Constraint for the test."
     echo "-n: CPU Constraint for the test."
-    echo "-p: Branch of the github repo of the ballerina performance tests."
+    echo "-p: Branch of the GitHub repo of the Ballerina performance tests."
     echo "-x: Username of GitHub account"
     echo "-v: Password of GitHub account"
     echo "-r: Options for JMeter. You should give the jmeter options in the inverted comma"
@@ -70,7 +68,7 @@ while getopts "c:f:g:j:n:p:x:v:r:s:k:y:h" opts; do
         ballerina_cpu=${OPTARG}
         ;;
     p)
-        githubrepo_branch=${OPTARG}
+        github_repo_branch=${OPTARG}
         ;;
     x)
         git_username=${OPTARG}
@@ -126,18 +124,18 @@ if [[ -z $ballerina_cpu ]]; then
     exit 1
 fi
 
-if [[ -z $githubrepo_branch ]]; then
-    echo "Please specify the branch of the github repo."
+if [[ -z $github_repo_branch ]]; then
+    echo "Please specify the branch of the GitHub repo."
     exit 1
 fi
 
 if [[ -z $git_username ]]; then
-    echo "Please provide the username of the github account."
+    echo "Please provide the username of the GitHub account."
     exit 1
 fi
 
 if [[ -z $git_password ]]; then
-    echo "Please provide the password of the github account."
+    echo "Please provide the password of the GitHub account."
     exit 1
 fi
 
@@ -152,7 +150,7 @@ if [[ -z $user_email ]]; then
 fi
 
 if [[ -z $ballerina_version ]]; then
-    echo "Please specify the ballerina version."
+    echo "Please specify the Ballerina version."
     exit 1
 fi
 
@@ -172,7 +170,7 @@ ParameterKey=KeyName,ParameterValue=$key_pair_name \
 ParameterKey=InstanceType,ParameterValue=$instance_type \
 ParameterKey=BallerinaMemory,ParameterValue=$ballerina_memory \
 ParameterKey=BallerinaCPU,ParameterValue=$ballerina_cpu \
-ParameterKey=GitHubRepoBranch,ParameterValue=$githubrepo_branch \
+ParameterKey=GitHubRepoBranch,ParameterValue=$github_repo_branch \
 ParameterKey=GitUsername,ParameterValue=$git_username \
 ParameterKey=GitPassword,ParameterValue=##### \
 ParameterKey=JMeterOptions,ParameterValue="$jmeter_options" \
@@ -181,6 +179,8 @@ ParameterKey=LatestAmiId,ParameterValue=$ec2_ami_id \
 ParameterKey=BallerinaVersion,ParameterValue=$ballerina_version \
 --capabilities CAPABILITY_IAM --tags Key=User,Value=$user_value"
 
+echo "Creating EC2 instance..."
+
 aws cloudformation create-stack --stack-name ec2-stack \
 --template-body file://$template_location \
 --parameters \
@@ -188,7 +188,7 @@ ParameterKey=KeyName,ParameterValue=$key_pair_name \
 ParameterKey=InstanceType,ParameterValue=$instance_type \
 ParameterKey=BallerinaMemory,ParameterValue=$ballerina_memory \
 ParameterKey=BallerinaCPU,ParameterValue=$ballerina_cpu \
-ParameterKey=GitHubRepoBranch,ParameterValue=$githubrepo_branch \
+ParameterKey=GitHubRepoBranch,ParameterValue=$github_repo_branch \
 ParameterKey=GitUsername,ParameterValue=$git_username \
 ParameterKey=GitPassword,ParameterValue=$git_password \
 ParameterKey=JMeterOptions,ParameterValue="$jmeter_options" \
@@ -198,20 +198,19 @@ ParameterKey=BallerinaVersion,ParameterValue=$ballerina_version \
 --capabilities CAPABILITY_IAM --tags Key=User,Value=$user_value
 
 # Wait until EC2 instance created
-echo "EC2 instance is creating..."
 aws cloudformation wait stack-create-complete --stack-name ec2-stack
 
 # Connect to the EC2 instance
 chmod 400 $key_pair_name.pem
 ec2_public_dns=$(aws ec2 describe-instances --query 'Reservations[*].Instances[].PublicDnsName |[-1]' --output text)
 ssh-keyscan -H $ec2_public_dns >> ~/.ssh/known_hosts
-echo "tail -f /var/log/cloud-init-output.log | sed '/^Finished the ballerina performane aws ecs test$/ q'" | ssh -i "$key_pair_name.pem" $ec2_public_dns -l ubuntu
+echo "tail -f /var/log/cloud-init-output.log | sed '/^Finished the Ballerina performance AWS ECS tests$/ q'" | ssh -i "$key_pair_name.pem" $ec2_public_dns -l ubuntu
 
-# Delete test stack and end the test
-echo "EC2 instance is deleting..."
+# Delete ec2-stack and end the test
+echo "Deleting EC2 instance..."
 aws cloudformation delete-stack --stack-name ec2-stack
 
 # Wait until ec2-stack deleted
 aws cloudformation wait stack-delete-complete --stack-name ec2-stack
 
-echo -e "\e[1mCompleted the ballerina performane aws ecs test"
+echo -e "\eCompleted the Ballerina performance AWS ECS tests."
