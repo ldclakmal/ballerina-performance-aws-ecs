@@ -68,6 +68,6 @@ sudo python3 create-summary-markdown.py --column-names "Scenario Name" "Heap Siz
 git add summary.md
 git add summary.csv
 git commit -m "Update performance results"
-git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/SmithAbey/ballerina-performance-aws-ecs.git --all
+git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/ballerina-platform/ballerina-performance-aws-ecs.git --all
 
 echo "Finished the Ballerina performance AWS ECS tests."

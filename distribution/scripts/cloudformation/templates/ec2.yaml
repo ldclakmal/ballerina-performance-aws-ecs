@@ -43,7 +43,7 @@ Parameters:
     Type: String
     Description: URL for the GitHub repo of the Ballerina performance tests.
     ConstraintDescription: Must be the URL of the GitHub repository.
-    Default: "https://github.com/SmithAbey/ballerina-performance-aws-ecs.git"
+    Default: "https://github.com/ballerina-platform/ballerina-performance-aws-ecs.git"
   GitHubRepoBranch:
     Type: String
     Description: Branch of the GitHub repo of the Ballerina performance tests.
