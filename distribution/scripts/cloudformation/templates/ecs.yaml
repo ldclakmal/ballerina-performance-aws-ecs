@@ -55,6 +55,9 @@ Parameters:
   BallerinaCPU:
     Type: String
     Description: CPU constraint for the test
+  Protocol:
+    Type: String
+    Description: Protocol type for health check
 
     
 ################################
@@ -88,6 +91,7 @@ Resources:
                 # ECS tasks to upload logs to CloudWatch
                 - 'logs:CreateLogStream'
                 - 'logs:PutLogEvents'
+                - 'logs:CreateLogGroup'
               Resource: '*'
  
   ####################################################################
@@ -146,6 +150,7 @@ Resources:
               awslogs-group: 'ballerina-performance-test'
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: 'netty'
+              awslogs-create-group: 'true'
       Tags:
         - Key: Name
           Value: !Join
@@ -243,6 +248,7 @@ Resources:
               awslogs-group: 'ballerina-performance-test'
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: 'ballerina'
+              awslogs-create-group: 'true'
       Tags:
         - Key: Name
           Value: !Join
@@ -291,8 +297,8 @@ Resources:
       Protocol: TCP
       Matcher:
         HttpCode: 200-399
-      HealthCheckPath: /passthrough/health-check
-      HealthCheckProtocol: HTTP
+      HealthCheckPath: /passthrough/healthcheck
+      HealthCheckProtocol: !Ref Protocol
       TargetType: ip
       Tags:
         - Key: Name

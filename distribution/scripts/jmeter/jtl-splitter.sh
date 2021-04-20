@@ -54,4 +54,6 @@ if [[ -z $heap_size ]]; then
     exit 1
 fi
 
+cd /home/ubuntu/ballerina-performance-aws-ecs/components/jtl-splitter/target
 java -Xms${heap_size} -Xmx${heap_size}  -jar ./jtl-splitter-$COMPONENTS_VERSION.jar $jtl_splitter_flags
+cd $HOME_DIR

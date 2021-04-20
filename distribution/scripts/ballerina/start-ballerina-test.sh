@@ -59,4 +59,5 @@ if [[ -z $test_name ]]; then
     exit 1
 fi
 
-java -jar $test_name.jar --b7a.netty=$netty_host
+export netty="$netty_host"
+java -jar $test_name.jar

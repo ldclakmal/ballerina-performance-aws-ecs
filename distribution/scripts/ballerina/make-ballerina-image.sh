@@ -55,16 +55,21 @@ cd $BALLERINA_DOCKER_DIR
 
 cp $SCRIPTS_DIR/ballerina/start-ballerina-test.sh .
 cp $SCRIPTS_DIR/ballerina/tests/$test_name/* .
-ballerina build $test_name.bal
+cp $SCRIPTS_DIR/ballerina/resources/ballerinaKeystore.p12 .
+cp $SCRIPTS_DIR/ballerina/resources/ballerinaTruststore.p12 .
+rm -rf ~/.ballerina
+bal build --offline $test_name.bal
 
 touch Dockerfile
 
 echo "FROM alpine:3.12.0" >> Dockerfile
 echo "USER root" >> Dockerfile
-echo "RUN apk add openjdk8=8.252.09-r0" >> Dockerfile
+echo "RUN apk add openjdk11=11.0.9_p11-r0" >> Dockerfile
 echo "ENV NETTY_HOST \"\"" >> Dockerfile
 echo "COPY $test_name.jar ." >> Dockerfile
 echo "COPY start-ballerina-test.sh ." >> Dockerfile
+echo "COPY ballerinaKeystore.p12 ." >> Dockerfile
+echo "COPY ballerinaTruststore.p12 ." >> Dockerfile
 echo "ENTRYPOINT ./start-ballerina-test.sh -n \$NETTY_HOST -t $test_name" >> Dockerfile
 
 cd $HOME_DIR

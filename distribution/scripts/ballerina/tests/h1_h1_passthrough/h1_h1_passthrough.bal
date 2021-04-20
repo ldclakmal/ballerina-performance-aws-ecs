@@ -18,9 +18,27 @@ import ballerina/http;
 import ballerina/log;
 import ballerina/os;
 
-http:Client nettyEP = checkpanic new("http://" + os:getEnv("netty")+ ":8688");
+http:ListenerConfiguration serviceConfig = {
+    secureSocket: {
+        key: {
+            path: "ballerinaKeystore.p12",
+            password: "ballerina"
+        }
+    }
+};
 
-service /passthrough on new http:Listener(9090) {
+http:ClientConfiguration clientConfig = {
+    secureSocket: {
+        cert: {
+            path: "ballerinaTruststore.p12",
+            password: "ballerina"
+        }
+    }
+};
+
+http:Client nettyEP = checkpanic new("http://" + os:getEnv("netty")+ ":8688",clientConfig);
+
+service /passthrough on new http:Listener(9090,serviceConfig) {
     
     resource function post .(http:Request req) returns http:Response|http:InternalServerError {
         var response = nettyEP->forward("/service/EchoService", req);

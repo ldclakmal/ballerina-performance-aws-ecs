@@ -19,20 +19,25 @@
 
 template_body_location="file://$SCRIPTS_DIR/cloudformation/templates/ecs.yaml"
 test_name=""
+healthcheck_protocol=""
 
 function usage() {
     echo ""
     echo "Usage: "
-    echo "$0 [-t <Name of the test>] [-h]"
+    echo "$0 [-t <Name of the test>] [-i <Type of the healthcheck protocol>] [-h]"
     echo ""
     echo "-t: Name of the test"
+    echo "-i: Type of the healthcheck protocol"
     echo ""
 }
 
-while getopts "t:h" opt; do
+while getopts "t:i:h" opt; do
     case "${opt}" in
     t)
         test_name=${OPTARG}
+        ;;
+    i)
+        healthcheck_protocol=${OPTARG}
         ;;
     h)
         usage
@@ -47,6 +52,10 @@ done
 if [[ -z $test_name ]]; then
     echo "Please provide the name of the test to start ECS cluster."
     exit 1
+fi
+if [[ -z $healthcheck_protocol ]]; then
+    echo "Please provide the type of the healthcheck protocol for the test to start ECS cluster."
+    exit 1
 else
     echo "Starting ECS cluster for $test_name."
 fi
@@ -60,4 +69,5 @@ ParameterKey=SecurityGroup,ParameterValue=$SECURITY_GROUP \
 ParameterKey=VPC,ParameterValue=$VPC \
 ParameterKey=BallerinaMemory,ParameterValue=$BALLERINA_MEMORY \
 ParameterKey=BallerinaCPU,ParameterValue=$BALLERINA_CPU \
+ParameterKey=Protocol,ParameterValue=$healthcheck_protocol \
 --capabilities CAPABILITY_IAM --tags Key=User,Value=$USER_EMAIL

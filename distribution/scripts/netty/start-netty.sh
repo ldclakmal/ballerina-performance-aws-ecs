@@ -20,6 +20,7 @@
 jar_name=""
 default_heap_size="4g"
 heap_size="$default_heap_size"
+enable_ssl="false"
 
 function usage() {
     echo ""
@@ -32,13 +33,16 @@ function usage() {
     echo ""
 }
 
-while getopts "m:j:h" opts; do
+while getopts "m:j:s:h" opts; do
     case $opts in
     m)
         heap_size=${OPTARG}
         ;;
     j)
         jar_name=${OPTARG}
+        ;;
+    s)
+        enable_ssl=${OPTARG}
         ;;
     h)
         usage
@@ -50,9 +54,6 @@ while getopts "m:j:h" opts; do
         ;;
     esac
 done
-shift "$((OPTIND - 1))"
-
-netty_service_flags="$@"
 
 if [[ -z $heap_size ]]; then
     echo "Please specify the heap size."
@@ -74,5 +75,10 @@ fi
 mkdir -p logs
 
 echo "Starting Netty"
-nohup java -Xms${heap_size} -Xmx${heap_size} -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$gc_log_file \
-    -jar $jar_name $netty_service_flags >netty.out 2>&1
+if [ $enable_ssl = true ]; then
+    nohup java -Xms${heap_size} -Xmx${heap_size} -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$gc_log_file \
+    -jar $jar_name --ssl $enable_ssl --key-store-file ballerinaKeystore.p12 --key-store-password ballerina >netty.out 2>&1
+else
+    nohup java -Xms${heap_size} -Xmx${heap_size} -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$gc_log_file \
+    -jar $jar_name >netty.out 2>&1
+fi

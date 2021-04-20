@@ -75,7 +75,7 @@ function print_durations() {
     local sorted_names=($(
         for name in "${!scenario_counter[@]}"; do
             echo "$name"
-        done | sort
+        done
     ))
     # Count scenarios
     local total_counter=0

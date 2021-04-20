@@ -25,8 +25,8 @@ if [ "$UID" -ne "0" ]; then
 fi
 
 echo "Installing Java..."
-apt-get -y install openjdk-8-jdk
-export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+apt-get -y install openjdk-11-jdk
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
 export PATH="$JAVA_HOME/bin:$PATH"
 echo "Java version:"
 java -version

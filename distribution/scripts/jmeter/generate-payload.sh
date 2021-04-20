@@ -60,5 +60,7 @@ fi
 
 for s in ${payloads[*]}; do
     echo "Generating ${s}B file"
+    cd /home/ubuntu/ballerina-performance-aws-ecs/components/payload-generator/target
     java -jar ./payload-generator-$COMPONENTS_VERSION.jar --size $s --payload-type ${payload_type}
+    cd $HOME_DIR
 done

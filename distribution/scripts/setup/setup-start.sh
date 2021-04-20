@@ -50,12 +50,24 @@ source $SCRIPTS_DIR/jmeter/install-jmeter.sh
 # Build components package
 $SCRIPTS_DIR/setup/build-components.sh
 
-ballerina_test_scenario="h1c-h1c-passthrough"
+# Run Jmeter test
+chmod +x $SCRIPTS_DIR/jmeter/start-jmeter-test.sh
+source $SCRIPTS_DIR/jmeter/start-jmeter-test.sh $JMETER_OPTIONS
 
-# Create Docker images and push to ECR
-$SCRIPTS_DIR/netty/make-netty-image.sh
-$SCRIPTS_DIR/ballerina/make-ballerina-image.sh -t $ballerina_test_scenario
-$SCRIPTS_DIR/jmeter/make-jmeter-image.sh
+# Create csv file
+cd $GITHUB_REPO_DIR/testresults
+sudo chmod +x create-summary-csv.sh
+sudo ./create-summary-csv.sh -n Passthrough HTTP service -x
 
-# Create ECS cluster
-$SCRIPTS_DIR/cloudformation/ecs-cfn.sh -t $ballerina_test_scenario
+# Create markdown file
+echo "y" | apt-get install python3.8
+echo "y" | apt-get install -y python3-humanize
+sudo python3 create-summary-markdown.py --column-names "Scenario Name" "Heap Size" "Concurrent Users" "Message Size (Bytes)" "Back-end Service Delay (ms)" "Label" "# Samples" "Error Count" "Error %" "Throughput (Requests/sec)" "Average Response Time (ms)" "Average Users in the System" "Standard Deviation of Response Time (ms)" "Minimum Response Time (ms)" "75th Percentile of Response Time (ms)" "90th Percentile of Response Time (ms)" "95th Percentile of Response Time (ms)" "98th Percentile of Response Time (ms)" "99th Percentile of Response Time (ms)" "99.9th Percentile of Response Time (ms)" "Received (KB/sec)" "Sent (KB/sec)" --json-parameters parameters=/home/ubuntu/results/test-metadata.json
+
+# Push results to the git repo
+git add summary.md
+git add summary.csv
+git commit -m "Update performance results"
+git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/SmithAbey/ballerina-performance-aws-ecs.git --all
+
+echo "Finished the ballerina performane aws ecs test"

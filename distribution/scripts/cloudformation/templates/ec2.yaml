@@ -43,21 +43,29 @@ Parameters:
     Type: String
     Description: URL for the github repo of the ballerina performance tests.
     ConstraintDescription: Must be the URL of the github repository.
-    Default: "https://github.com/ldclakmal/ballerina-performance-aws-ecs.git"
+    Default: "https://github.com/SmithAbey/ballerina-performance-aws-ecs.git"
   GitHubRepoBranch:
     Type: String
     Description: Branch of the github repo of the ballerina performance tests.
-    Default: "master"
-  BallerinaZipURL:
+    Default: "master"  
+  GitUsername:
     Type: String
-    Description: URL for the Ballerina Zip file.
-    ConstraintDescription: Must be the URL of the ballerina zip file.
-    Default: "https://dist.ballerina.io/downloads/swan-lake-preview2/ballerina-swan-lake-preview2.zip"
+    Description: CPU Constraint for the test.
+    Default: ""
+  GitPassword:
+    Type: String
+    Description: CPU Constraint for the test.
+    Default: ""  
+  BallerinaVersion:
+    Type: String
+    Description: Version for the Ballerina deb file.
+    ConstraintDescription: Must be the name of the ballerina deb file version.
+    Default: "swan-lake-alpha3"
   JMeterOptions:
     Type: String
     Description: Options for JMeter.
     ConstraintDescription: A string of options for JMeter.
-    Default: "-u 100 -b 512 1024 2048 -d 600 -w 150 -i h1c"
+    Default: "-m 2G -u 100 -b 50 -b 100"
   BallerinaMemory:
     Type: String
     Description: Memory Constraint for the test.
@@ -66,6 +74,10 @@ Parameters:
     Type: String
     Description: CPU Constraint for the test.
     Default: "1024"
+  LatestAmiId:
+    Type: String
+    Description: Image ID of the EC2 Instance.
+    Default: "ami-042e8287309f5df03"
   InstanceType:
     Type: String
     Description: WebServer EC2 instance type.
@@ -105,6 +117,10 @@ Parameters:
       - c4.2xlarge
       - c4.4xlarge
       - c4.8xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
       - g2.2xlarge
       - g2.8xlarge
       - r3.large
@@ -360,6 +376,7 @@ Resources:
     Properties: 
       FileSystemId: !Ref FileSystem
       SubnetId: !Ref PublicSubnet
+      IpAddress: 10.0.0.108
       SecurityGroups: 
         - !Ref SecurityGroup
 
@@ -370,7 +387,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     DependsOn: MountTarget
     Properties:
-      ImageId: ami-0bbe28eb2173f6167
+      ImageId: !Ref LatestAmiId
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
       IamInstanceProfile: !Ref EC2InstanceProfile
@@ -394,7 +411,7 @@ Resources:
           #!/bin/bash -xe
           export GITHUB_REPO_URL="${GitHubRepoURL}"
           export GITHUB_REPO_BRANCH="${GitHubRepoBranch}"
-          export BALLERINA_ZIP_URL="${BallerinaZipURL}"
+          export BALLERINA_VERSION="${BallerinaVersion}"
           export JMETER_OPTIONS="${JMeterOptions}"
           export FILE_SYSTEM="${FileSystem}"
           export BALLERINA_MEMORY="${BallerinaMemory}"
@@ -405,6 +422,8 @@ Resources:
           export VPC="${VPC}"
           export AWS_ACCOUNT_ID="${AWS::AccountId}"
           export AWS_REGION="${AWS::Region}"
+          export GIT_USERNAME="${GitUsername}"
+          export GIT_PASSWORD="${GitPassword}"
           # Set custom directory as environment variables
           export HOME_DIR="/home/ubuntu"
           export GITHUB_REPO_DIR="$HOME_DIR/ballerina-performance-aws-ecs"
@@ -415,7 +434,7 @@ Resources:
           apt-get install -y curl nfs-common
           apt install -y libarchive-tools
           mkdir $FILE_SYSTEM_DIR
-          mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 $FILE_SYSTEM.efs.$AWS_REGION.amazonaws.com:/ $FILE_SYSTEM_DIR
+          mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.0.108:/ $FILE_SYSTEM_DIR
           # Clone the GitHub repository.
           git clone -b $GITHUB_REPO_BRANCH $GITHUB_REPO_URL $GITHUB_REPO_DIR
           if [ ! -d $GITHUB_REPO_DIR ]; then

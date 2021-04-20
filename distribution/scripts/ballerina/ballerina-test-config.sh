@@ -28,7 +28,24 @@ declare -A test_scenario0=(
     [path]="/passthrough"
     [jmx]="http-post-request.jmx"
     [protocol]="http"
+    [healthcheck_protocol]="HTTP"
     [port]="9090"
+    [netty_options]=""
+    [skip]=false
+)
+
+declare -A test_scenario1=(
+    [name]="h1_h1_passthrough"
+    [display_name]="Passthrough HTTPS service (h1 -> h1)"
+    [description]="An HTTPS Service, which forwards all requests to an HTTPS back-end service."
+    [bal]="h1_h1_passthrough.jar"
+    [bal_flags]=""
+    [path]="/passthrough"
+    [jmx]="http-post-request.jmx"
+    [protocol]="https"
+    [healthcheck_protocol]="HTTPS"
+    [port]="9090"
+    [netty_options]="true"
     [skip]=false
 )
 
@@ -39,6 +56,6 @@ function before_execute_test_scenario() {
     local protocol=${scenario[protocol]}
     local port=${scenario[port]}
     jmeter_params+=("host=$hostname" "port=$port" "path=$service_path")
-    jmeter_params+=("payload=./${msize}B.json" "response_size=${msize}B" "protocol=$protocol")
+    jmeter_params+=("payload=$GITHUB_REPO_DIR/components/payload-generator/target/${msize}B.json" "response_size=${msize}B" "protocol=$protocol")
     JMETER_JVM_ARGS="-Xbootclasspath/p:/opt/alpnboot/alpnboot.jar"
 }
